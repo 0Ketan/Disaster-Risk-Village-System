@@ -1,186 +1,208 @@
-import React, { useState } from 'react';
-import MapView from './components/MapView';
-import VillagePanel from './components/VillagePanel';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import Navbar from './components/layout/Navbar';
+import Sidebar from './components/layout/Sidebar';
+import MapView from './components/map/MapView';
+import DetailDrawer from './components/drawer/DetailDrawer';
+import DashboardView from './components/dashboard/DashboardView';
+import { getVillages, getVillageById, getDashboardSummary } from './api/villages';
+import { getApiHealthStatus } from './api/health';
 
-// Member 5 will build these components later. We leave them commented out for now.
-// import Dashboard from './components/Dashboard';
-// import RelocationPanel from './components/RelocationPanel';
-
-export default function App() {
-  // State to track which tab is open and which village is clicked
-  const [activeTab, setActiveTab] = useState('map'); 
+/**
+ * Main Application Shell (VillageShield)
+ * Unified state orchestration between Map, Sidebar, Detail Drawer, and Dashboard.
+ */
+export const App = () => {
+  const [activeView, setActiveView] = useState('map'); // 'map' | 'dashboard'
+  const [villages, setVillages] = useState([]);
   const [selectedVillageId, setSelectedVillageId] = useState(null);
-  const [showRelocation, setShowRelocation] = useState(false);
+  const [selectedVillage, setSelectedVillage] = useState(null);
+  const [apiHealth, setApiHealth] = useState([]);
+  const [summary, setSummary] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
 
-  // This function runs when a village is clicked on the map OR the dashboard
-  const handleVillageSelect = (id) => {
+  // Fetch all initial data
+  const fetchData = useCallback(async () => {
+    try {
+      const [villagesRes, healthRes, summaryRes] = await Promise.all([
+        getVillages(),
+        getApiHealthStatus(),
+        getDashboardSummary(),
+      ]);
+
+      if (villagesRes && villagesRes.villages) {
+        setVillages(villagesRes.villages);
+      }
+
+      if (healthRes && healthRes.services) {
+        setApiHealth(healthRes.services);
+      }
+
+      if (summaryRes) {
+        setSummary(summaryRes);
+      }
+    } catch (err) {
+      console.error('VillageShield failed initial data load:', err);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+
+    // Periodic background health check every 30 seconds
+    const interval = setInterval(() => {
+      getApiHealthStatus().then((res) => {
+        if (res && res.services) setApiHealth(res.services);
+      }).catch(console.warn);
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [fetchData]);
+
+  // When selectedVillageId changes, load detailed village record
+  useEffect(() => {
+    let isMounted = true;
+    if (!selectedVillageId) {
+      setSelectedVillage(null);
+      return;
+    }
+
+    const localFound = villages.find((v) => Number(v.id) === Number(selectedVillageId));
+    if (localFound) {
+      setSelectedVillage(localFound);
+    }
+
+    // Also fetch full detail from API for any supplementary attributes
+    getVillageById(selectedVillageId)
+      .then((res) => {
+        if (isMounted && res && res.village) {
+          setSelectedVillage((prev) => ({ ...prev, ...res.village }));
+        }
+      })
+      .catch((err) => {
+        console.warn(`Could not fetch details for village ${selectedVillageId}:`, err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedVillageId, villages]);
+
+  const handleVillageSelect = useCallback((id) => {
     setSelectedVillageId(id);
-    setShowRelocation(false);
-    setActiveTab('map');
-  };
+    // If selecting from Dashboard, switch to map view for visual geographical context
+    if (activeView !== 'map') {
+      setActiveView('map');
+    }
+  }, [activeView]);
+
+  const handleCloseDrawer = useCallback(() => {
+    setSelectedVillageId(null);
+    setSelectedVillage(null);
+  }, []);
+
+  const handleRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    fetchData();
+  }, [fetchData]);
+
+  // Derived counts for navbar
+  const criticalCount = useMemo(() => {
+    return villages.filter((v) => v.risk_score >= 81 || v.risk_level === 'Critical').length;
+  }, [villages]);
+
+  const highCount = useMemo(() => {
+    return villages.filter((v) => (v.risk_score >= 61 && v.risk_score <= 80) || v.risk_level === 'High').length;
+  }, [villages]);
+
+  const populationAtRisk = useMemo(() => {
+    return villages.reduce((sum, v) => sum + (Number(v.population) || 0), 0);
+  }, [villages]);
+
+  const hasFallbackData = useMemo(() => {
+    const hasFallbackVillage = villages.some((v) => v._source === 'fallback');
+    const hasFallbackHealth = apiHealth.some((s) => s.mode === 'fallback' || s.status === 'degraded');
+    return hasFallbackVillage || hasFallbackHealth;
+  }, [villages, apiHealth]);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif', margin: 0 }}>
-      {/* Top Navigation Bar */}
-      <header style={{ backgroundColor: '#2c3e50', color: 'white', padding: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ margin: 0, fontSize: '22px' }}>Disaster Risk Village System</h1>
-        <div>
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            style={{ 
-              marginRight: '10px', padding: '8px 15px', cursor: 'pointer', 
-              backgroundColor: activeTab === 'dashboard' ? '#3498db' : '#34495e',
-              color: 'white', border: 'none', borderRadius: '4px'
-            }}
-          >
-            Dashboard
-          </button>
-          <button
-            onClick={() => setActiveTab('map')}
-            style={{ 
-              padding: '8px 15px', cursor: 'pointer',
-              backgroundColor: activeTab === 'map' ? '#3498db' : '#34495e',
-              color: 'white', border: 'none', borderRadius: '4px'
-            }}
-          >
-            Map View
-          </button>
-        </div>
-      </header>
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-surface font-sans">
+      {/* Top Fixed Navigation Bar */}
+      <Navbar
+        activeView={activeView}
+        setActiveView={setActiveView}
+        totalVillages={villages.length}
+        criticalCount={criticalCount}
+        highCount={highCount}
+        populationAtRisk={populationAtRisk}
+        hasFallbackData={hasFallbackData}
+      />
 
-      {/* Main Split-Screen Content */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {activeTab === 'dashboard' ? (
-          <div style={{ width: '100%', padding: '20px', overflowY: 'auto' }}>
-            <h2>Dashboard</h2>
-            <p>Member 5 will insert the Dashboard component here.</p>
-            {/* <Dashboard onVillageSelect={handleVillageSelect} /> */}
-          </div>
-        ) : (
+      {/* Main Content Area */}
+      <div className="flex-1 flex pt-nav h-[calc(100vh-60px)] overflow-hidden relative">
+        {activeView === 'map' ? (
           <>
-            {/* Left Side: The Map (Takes up 2/3 of the screen) */}
-            <div style={{ flex: 2, borderRight: '2px solid #ccc', backgroundColor: '#e9ecef' }}>
-              <MapView onVillageSelect={handleVillageSelect} />
+            {/* Left Sidebar Container */}
+            <div 
+              className={`transition-all duration-300 ease-in-out flex-shrink-0 relative ${isLeftSidebarOpen ? 'w-full md:w-sidebar' : 'w-0 overflow-hidden'}`}
+            >
+              <div className="w-full md:w-sidebar h-full">
+                <Sidebar
+                  villages={villages}
+                  selectedVillageId={selectedVillageId}
+                  onVillageSelect={handleVillageSelect}
+                  apiHealth={apiHealth}
+                  isLoading={isLoading}
+                />
+              </div>
             </div>
 
-            {/* Right Side: The Details Panel (Takes up 1/3 of the screen) */}
-            <div style={{ flex: 1, backgroundColor: '#f8f9fa', overflowY: 'auto' }}>
-              {showRelocation ? (
-                <div style={{ padding: '20px' }}>
-                  <h2>Relocation Sites</h2>
-                  <p>Member 5 will insert the RelocationPanel component here.</p>
-                  <button 
-                    onClick={() => setShowRelocation(false)}
-                    style={{ padding: '8px 12px', cursor: 'pointer' }}
-                  >
-                    ← Back to Village Details
-                  </button>
-                  {/* <RelocationPanel villageId={selectedVillageId} onBack={() => setShowRelocation(false)} /> */}
-                </div>
-              ) : (
-                <VillagePanel
-                  villageId={selectedVillageId}
-                  onViewRelocation={(id) => setShowRelocation(true)}
-                />
-              )}
-            </div>
+            {/* Toggle Left Sidebar Button */}
+            <button
+              onClick={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-[400] bg-surface border border-outline-variant rounded-r-lg shadow-md p-1.5 flex items-center justify-center hover:bg-surface-variant transition-colors"
+              title={isLeftSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+              style={{ transform: isLeftSidebarOpen ? 'translate(380px, -50%)' : 'translate(0, -50%)', transition: 'transform 300ms ease-in-out' }}
+            >
+              <span className="text-on-surface-variant text-xl leading-none">
+                {isLeftSidebarOpen ? '‹' : '›'}
+              </span>
+            </button>
+
+            {/* Central Interactive Map */}
+            <main className="flex-1 h-full relative overflow-hidden">
+              <MapView
+                villages={villages}
+                selectedVillageId={selectedVillageId}
+                onVillageSelect={handleVillageSelect}
+              />
+            </main>
+
+            {/* Slide-out Detail Drawer */}
+            {selectedVillage && (
+              <DetailDrawer
+                village={selectedVillage}
+                onClose={handleCloseDrawer}
+              />
+            )}
           </>
+        ) : (
+          /* Executive Dashboard View */
+          <DashboardView
+            villages={villages}
+            summary={summary}
+            onVillageSelect={handleVillageSelect}
+            onRefresh={handleRefresh}
+            isRefreshing={isRefreshing}
+          />
         )}
       </div>
     </div>
   );
-}
-﻿const App = () => {
-    const [activeTab, setActiveTab] = React.useState('map'); // 'map' or 'dashboard'
-    const [selectedVillageId, setSelectedVillageId] = React.useState(null);
-    const [showRelocation, setShowRelocation] = React.useState(false);
-
-    const handleVillageClick = (id) => {
-        setSelectedVillageId(id);
-        setShowRelocation(false);
-    };
-
-    const handleFindRelocation = (id) => {
-        setShowRelocation(true);
-    };
-
-    const handleCloseSidebar = () => {
-        setSelectedVillageId(null);
-        setShowRelocation(false);
-    };
-
-    return (
-        <div style={{ fontFamily: 'Arial, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column', margin: 0 }}>
-            {/* Header / Navbar */}
-            <header style={{ 
-                backgroundColor: '#2c3e50', padding: '15px 20px', 
-                color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
-            }}>
-                <h1 style={{ margin: 0, fontSize: '24px' }}>Disaster Risk Village System</h1>
-                <div>
-                    <button 
-                        onClick={() => setActiveTab('map')}
-                        style={{ 
-                            background: activeTab === 'map' ? '#2980b9' : 'transparent', 
-                            color: 'white', border: '1px solid #2980b9', 
-                            padding: '8px 16px', marginRight: '10px', 
-                            borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' 
-                        }}
-                    >
-                        Live Map
-                    </button>
-                    <button 
-                        onClick={() => setActiveTab('dashboard')}
-                        style={{ 
-                            background: activeTab === 'dashboard' ? '#2980b9' : 'transparent', 
-                            color: 'white', border: '1px solid #2980b9', 
-                            padding: '8px 16px', 
-                            borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' 
-                        }}
-                    >
-                        Executive Dashboard
-                    </button>
-                </div>
-            </header>
-
-            {/* Main Content Area */}
-            <main style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-                {activeTab === 'dashboard' ? (
-                    <div style={{ flex: 1, overflowY: 'auto' }}>
-                        <Dashboard />
-                    </div>
-                ) : (
-                    <div style={{ flex: 1, display: 'flex', position: 'relative' }}>
-                        {/* Map View */}
-                        <MapView onVillageClick={handleVillageClick} />
-                        
-                        {/* Sidebar */}
-                        <div style={{ 
-                            width: selectedVillageId ? '350px' : '0px',
-                            transition: 'width 0.3s ease',
-                            borderLeft: selectedVillageId ? '2px solid #bdc3c7' : 'none',
-                            boxShadow: selectedVillageId ? '-2px 0 5px rgba(0,0,0,0.1)' : 'none',
-                            overflow: 'hidden',
-                            backgroundColor: '#fff'
-                        }}>
-                            {selectedVillageId && (
-                                showRelocation ? (
-                                    <RelocationPanel 
-                                        villageId={selectedVillageId} 
-                                        onBack={() => setShowRelocation(false)} 
-                                    />
-                                ) : (
-                                    <VillagePanel 
-                                        villageId={selectedVillageId} 
-                                        onFindRelocation={handleFindRelocation}
-                                        onClose={handleCloseSidebar}
-                                    />
-                                )
-                            )}
-                        </div>
-                    </div>
-                )}
-            </main>
-        </div>
-    );
 };
+
+export default App;
