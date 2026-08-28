@@ -1,4 +1,4 @@
-"""
+﻿"""
 Relocation scoring engine for Disaster Risk Village System.
 Finds best relocation sites for villages at risk.
 """
@@ -26,21 +26,6 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 def find_best_sites(village: dict, all_sites: list) -> list:
     """
     Find the best relocation sites for a given village.
-
-    Args:
-        village: Dictionary containing village data with fields:
-            id, name, population, latitude, longitude
-        all_sites: List of site dictionaries, each with:
-            id, name, district, latitude, longitude, total_capacity,
-            current_population, safety_score (0-100),
-            road_connectivity_score (0-10),
-            water_availability_score (0-10),
-            healthcare_score (0-10)
-
-    Returns:
-        List of top 3 eligible sites sorted by overall_score descending.
-        Each site includes: all original fields + available_capacity +
-        overall_score (0-100) + distance_km + score_breakdown dict
     """
     village_population = village['population']
     village_lat = village['latitude']
@@ -63,43 +48,47 @@ def find_best_sites(village: dict, all_sites: list) -> list:
         )
 
         # Distance score: closer is better, max 200km
-        # At 0km: score = 100, at 200km: score = 0
         distance_score = max(0, 100 - (distance_km / 200) * 100)
 
-        # Capacity adequacy score: percentage of capacity that would be used
-        # Lower usage = higher score
+        # Capacity adequacy score
         usage_percentage = (village_population / site['total_capacity']) * 100
         capacity_adequacy_score = max(0, 100 - usage_percentage)
 
-        # Calculate overall score using weights:
-        # safety 30%, capacity adequacy 25%, road 15%, water 10%, healthcare 10%, distance 10%
+        # Fix: Multiply 0-10 scores by 10 to scale to 0-100 before weighting
+        road_scaled = site['road_connectivity_score'] * 10
+        water_scaled = site['water_availability_score'] * 10
+        health_scaled = site['healthcare_score'] * 10
+
         overall_score = (
             site['safety_score'] * 0.30 +
             capacity_adequacy_score * 0.25 +
-            site['road_connectivity_score'] * 0.15 +
-            site['water_availability_score'] * 0.10 +
-            site['healthcare_score'] * 0.10 +
+            road_scaled * 0.15 +
+            water_scaled * 0.10 +
+            health_scaled * 0.10 +
             distance_score * 0.10
         )
 
         # Create score breakdown
         score_breakdown = {
-            'safety': round(site['safety_score'], 2),
-            'capacity': round(capacity_adequacy_score, 2),
-            'road': round(site['road_connectivity_score'], 2),
-            'water': round(site['water_availability_score'], 2),
-            'healthcare': round(site['healthcare_score'], 2),
-            'distance': round(distance_score, 2)
+            'safety': round(site['safety_score'], 1),
+            'capacity': round(capacity_adequacy_score, 1),
+            'road': round(road_scaled, 1),
+            'water': round(water_scaled, 1),
+            'healthcare': round(health_scaled, 1),
+            'distance': round(distance_score, 1)
         }
 
         # Create enhanced site dictionary
         enhanced_site = site.copy()
         enhanced_site.update({
             'available_capacity': available_capacity,
-            'overall_score': round(overall_score, 2),
-            'distance_km': round(distance_km, 2),
+            'overall_score': round(overall_score, 1),
+            'distance_km': round(distance_km, 1),
             'score_breakdown': score_breakdown
         })
+
+        # Add explanation
+        enhanced_site['explanation'] = explain_recommendation(enhanced_site)
 
         eligible_sites.append(enhanced_site)
 
@@ -111,15 +100,8 @@ def find_best_sites(village: dict, all_sites: list) -> list:
 def explain_recommendation(site: dict) -> str:
     """
     Generate a 2-sentence plain English explanation of why this site is recommended.
-
-    Args:
-        site: Dictionary containing site data with score breakdown
-
-    Returns:
-        2-sentence explanation string
     """
     name = site['name']
-    overall_score = site['overall_score']
     distance_km = site['distance_km']
     available_capacity = site['available_capacity']
     score_breakdown = site['score_breakdown']
@@ -137,7 +119,6 @@ def explain_recommendation(site: dict) -> str:
     strongest_factor = max(factors, key=factors.get)
     weakest_factor = min(factors, key=factors.get)
 
-    # Create explanation
     explanation = (
         f"{name} is recommended because it has excellent "
         f"{strongest_factor.replace('_', ' ')} "

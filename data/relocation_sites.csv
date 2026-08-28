@@ -1,0 +1,8 @@
+﻿id,name,district,latitude,longitude,total_capacity,current_population,safety_score,road_connectivity_score,water_availability_score,healthcare_score
+1,Guptkashi,Rudraprayag,30.5267,79.0743,5000,1200,92,8,9,7
+2,Agastyamuni,Rudraprayag,30.3920,78.9850,9000,5200,88,9,8,8
+3,Rudraprayag Safe Zone,Rudraprayag,30.2844,78.9811,15000,9300,85,9,9,9
+4,Gauchar,Chamoli,30.2900,79.1550,8000,3400,94,8,8,7
+5,Tilwara Greenfield,Rudraprayag,30.3450,78.9720,6000,2400,82,7,7,6
+6,Srinagar Camp,Pauri Garhwal,30.2220,78.7830,20000,12000,90,9,9,9
+7,Sumari Plateau,Pauri Garhwal,30.2500,78.8500,7500,3100,89,7,8,6
