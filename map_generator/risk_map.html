@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_93dc1de8424774749235049b8605e7d5 {
+                #map_3f2166a22030446400207f241b3c0a61 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -86,14 +86,14 @@
     </div>
     
     
-            <div class="folium-map" id="map_93dc1de8424774749235049b8605e7d5" ></div>
+            <div class="folium-map" id="map_3f2166a22030446400207f241b3c0a61" ></div>
         
 </body>
 <script>
     
     
-            var map_93dc1de8424774749235049b8605e7d5 = L.map(
-                "map_93dc1de8424774749235049b8605e7d5",
+            var map_3f2166a22030446400207f241b3c0a61 = L.map(
+                "map_3f2166a22030446400207f241b3c0a61",
                 {
                     center: [30.49611111111111, 79.04001666666666],
                     crs: L.CRS.EPSG3857,
@@ -110,7 +110,7 @@
 
         
     
-            var tile_layer_0cbdfda8da47fbafed62948d7c3f75bd = L.tileLayer(
+            var tile_layer_4d6ad63bea2da62818054396aea96aba = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -127,35 +127,35 @@
             );
         
     
-            tile_layer_0cbdfda8da47fbafed62948d7c3f75bd.addTo(map_93dc1de8424774749235049b8605e7d5);
+            tile_layer_4d6ad63bea2da62818054396aea96aba.addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-            var circle_marker_0c16e876694fea63452bca8a90307923 = L.circleMarker(
+            var circle_marker_88769503956ec6da4bd665ecc731587d = L.circleMarker(
                 [30.4934, 79.0547],
-                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_9567b0b0087ca12d35a9d63407c16e7f = L.popup({
+        var popup_f4bdfc6c5b64058d1feb235ffa7adcfb = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_533b516414ddc1779f7c2337370c4465 = $(`<div id="html_533b516414ddc1779f7c2337370c4465" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Ukhimath             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: red;">Critical</span><br>                 <b>Risk Score:</b> 81.8/100<br>                 <b>Population:</b> 2,100<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 1}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_9567b0b0087ca12d35a9d63407c16e7f.setContent(html_533b516414ddc1779f7c2337370c4465);
+                var html_dda6bc6036364c0b39f6abb4a71a1b56 = $(`<div id="html_dda6bc6036364c0b39f6abb4a71a1b56" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Ukhimath             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 54.72/100<br>                 <b>Population:</b> 2,100<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 1}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_f4bdfc6c5b64058d1feb235ffa7adcfb.setContent(html_dda6bc6036364c0b39f6abb4a71a1b56);
             
         
 
-        circle_marker_0c16e876694fea63452bca8a90307923.bindPopup(popup_9567b0b0087ca12d35a9d63407c16e7f)
+        circle_marker_88769503956ec6da4bd665ecc731587d.bindPopup(popup_f4bdfc6c5b64058d1feb235ffa7adcfb)
         ;
 
         
     
     
-            circle_marker_0c16e876694fea63452bca8a90307923.bindTooltip(
+            circle_marker_88769503956ec6da4bd665ecc731587d.bindTooltip(
                 `<div>
-                     Ukhimath — Critical (81.8/100)
+                     Ukhimath — High (54.72/100)
                  </div>`,
                 {
   "sticky": true,
@@ -163,98 +163,32 @@
             );
         
     
-            var circle_marker_d967b7b47fe1fe9e755cc81772673a2a = L.circleMarker(
+            var circle_marker_8fee8ef89649dfaf81b8158b6166178d = L.circleMarker(
                 [30.7352, 79.0669],
-                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
-        
-    
-        var popup_37ea914ee7a8c792e7f862849dfed1f4 = L.popup({
-  "maxWidth": 250,
-});
-
-        
-            
-                var html_8e942b53e6115471695666a6206193c7 = $(`<div id="html_8e942b53e6115471695666a6206193c7" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Kedarnath             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: red;">Critical</span><br>                 <b>Risk Score:</b> 95.3/100<br>                 <b>Population:</b> 600<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 2}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_37ea914ee7a8c792e7f862849dfed1f4.setContent(html_8e942b53e6115471695666a6206193c7);
-            
-        
-
-        circle_marker_d967b7b47fe1fe9e755cc81772673a2a.bindPopup(popup_37ea914ee7a8c792e7f862849dfed1f4)
-        ;
-
-        
-    
-    
-            circle_marker_d967b7b47fe1fe9e755cc81772673a2a.bindTooltip(
-                `<div>
-                     Kedarnath — Critical (95.3/100)
-                 </div>`,
-                {
-  "sticky": true,
-}
-            );
-        
-    
-            var circle_marker_adc7133f3297f9b9a8c483f677eba6f7 = L.circleMarker(
-                [30.5833, 79.0333],
-                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
-        
-    
-        var popup_832ce245a6d03d64b3ba32cac54aac77 = L.popup({
-  "maxWidth": 250,
-});
-
-        
-            
-                var html_d1baa5aacdbf1ca729814b3d65652b9c = $(`<div id="html_d1baa5aacdbf1ca729814b3d65652b9c" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Gaurikund             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: red;">Critical</span><br>                 <b>Risk Score:</b> 85.7/100<br>                 <b>Population:</b> 1,400<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 3}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_832ce245a6d03d64b3ba32cac54aac77.setContent(html_d1baa5aacdbf1ca729814b3d65652b9c);
-            
-        
-
-        circle_marker_adc7133f3297f9b9a8c483f677eba6f7.bindPopup(popup_832ce245a6d03d64b3ba32cac54aac77)
-        ;
-
-        
-    
-    
-            circle_marker_adc7133f3297f9b9a8c483f677eba6f7.bindTooltip(
-                `<div>
-                     Gaurikund — Critical (85.7/100)
-                 </div>`,
-                {
-  "sticky": true,
-}
-            );
-        
-    
-            var circle_marker_d9128eb8fa2308f81dedd71939829e50 = L.circleMarker(
-                [30.54, 79.03],
                 {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_fb67b248e7f931723f0cce3a2149d02c = L.popup({
+        var popup_c67dfc771a1b964376a730577bdf3a12 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_98f9615602e4cc6b91f7ef4c1cf1ba6c = $(`<div id="html_98f9615602e4cc6b91f7ef4c1cf1ba6c" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Phata             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 65.6/100<br>                 <b>Population:</b> 1,850<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 4}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_fb67b248e7f931723f0cce3a2149d02c.setContent(html_98f9615602e4cc6b91f7ef4c1cf1ba6c);
+                var html_6f8513f357685bbdf6fbc2969a99421d = $(`<div id="html_6f8513f357685bbdf6fbc2969a99421d" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Kedarnath             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 64.17/100<br>                 <b>Population:</b> 600<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 2}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_c67dfc771a1b964376a730577bdf3a12.setContent(html_6f8513f357685bbdf6fbc2969a99421d);
             
         
 
-        circle_marker_d9128eb8fa2308f81dedd71939829e50.bindPopup(popup_fb67b248e7f931723f0cce3a2149d02c)
+        circle_marker_8fee8ef89649dfaf81b8158b6166178d.bindPopup(popup_c67dfc771a1b964376a730577bdf3a12)
         ;
 
         
     
     
-            circle_marker_d9128eb8fa2308f81dedd71939829e50.bindTooltip(
+            circle_marker_8fee8ef89649dfaf81b8158b6166178d.bindTooltip(
                 `<div>
-                     Phata — High (65.6/100)
+                     Kedarnath — High (64.17/100)
                  </div>`,
                 {
   "sticky": true,
@@ -262,32 +196,98 @@
             );
         
     
-            var circle_marker_e8f74feaf87a9b963374e029d017808b = L.circleMarker(
+            var circle_marker_d53b055d411b1a619c611872f70bc9c7 = L.circleMarker(
+                [30.5833, 79.0333],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
+        
+    
+        var popup_1368b49eb2ab8bf2d622a425bb5e88a8 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_311c0a854c5df8540f62e312cfc35293 = $(`<div id="html_311c0a854c5df8540f62e312cfc35293" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Gaurikund             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 57.31/100<br>                 <b>Population:</b> 1,400<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 3}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_1368b49eb2ab8bf2d622a425bb5e88a8.setContent(html_311c0a854c5df8540f62e312cfc35293);
+            
+        
+
+        circle_marker_d53b055d411b1a619c611872f70bc9c7.bindPopup(popup_1368b49eb2ab8bf2d622a425bb5e88a8)
+        ;
+
+        
+    
+    
+            circle_marker_d53b055d411b1a619c611872f70bc9c7.bindTooltip(
+                `<div>
+                     Gaurikund — High (57.31/100)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3eeba83c915486eb625ff0dff51e1b2b = L.circleMarker(
+                [30.54, 79.03],
+                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
+        
+    
+        var popup_216129a847693c11813a55db3e5e7688 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_38b661b97c14bd5e334c571108874756 = $(`<div id="html_38b661b97c14bd5e334c571108874756" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Phata             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 43.78/100<br>                 <b>Population:</b> 1,850<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 4}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_216129a847693c11813a55db3e5e7688.setContent(html_38b661b97c14bd5e334c571108874756);
+            
+        
+
+        circle_marker_3eeba83c915486eb625ff0dff51e1b2b.bindPopup(popup_216129a847693c11813a55db3e5e7688)
+        ;
+
+        
+    
+    
+            circle_marker_3eeba83c915486eb625ff0dff51e1b2b.bindTooltip(
+                `<div>
+                     Phata — Moderate (43.78/100)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_33af5e3ca828cdbf317a33149024b74d = L.circleMarker(
                 [30.63, 78.99],
-                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_0765abb377cddbf72fffd4a598327d54 = L.popup({
+        var popup_0ea6cf753b392a2650accbd569812678 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_ef8ebe9f5852a48fa65bdd9a6fd9ca5c = $(`<div id="html_ef8ebe9f5852a48fa65bdd9a6fd9ca5c" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Sonprayag             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: red;">Critical</span><br>                 <b>Risk Score:</b> 85.2/100<br>                 <b>Population:</b> 1,200<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 5}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_0765abb377cddbf72fffd4a598327d54.setContent(html_ef8ebe9f5852a48fa65bdd9a6fd9ca5c);
+                var html_e3f7887fe43d5d1e5ff6300734a45c08 = $(`<div id="html_e3f7887fe43d5d1e5ff6300734a45c08" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Sonprayag             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 57.5/100<br>                 <b>Population:</b> 1,200<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 5}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_0ea6cf753b392a2650accbd569812678.setContent(html_e3f7887fe43d5d1e5ff6300734a45c08);
             
         
 
-        circle_marker_e8f74feaf87a9b963374e029d017808b.bindPopup(popup_0765abb377cddbf72fffd4a598327d54)
+        circle_marker_33af5e3ca828cdbf317a33149024b74d.bindPopup(popup_0ea6cf753b392a2650accbd569812678)
         ;
 
         
     
     
-            circle_marker_e8f74feaf87a9b963374e029d017808b.bindTooltip(
+            circle_marker_33af5e3ca828cdbf317a33149024b74d.bindTooltip(
                 `<div>
-                     Sonprayag — Critical (85.2/100)
+                     Sonprayag — High (57.5/100)
                  </div>`,
                 {
   "sticky": true,
@@ -295,32 +295,32 @@
             );
         
     
-            var circle_marker_9aff7d5a39bbcc584947d7fc3e9aa530 = L.circleMarker(
+            var circle_marker_40adb5cacab8b6e723c31ba86b651e92 = L.circleMarker(
                 [30.5267, 79.0743],
-                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_83b43485d48c6fb406e0aa4150f62050 = L.popup({
+        var popup_e7d4c94feba0222404aecde61e007604 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_9304c091c45e59b660718d8d1949e22d = $(`<div id="html_9304c091c45e59b660718d8d1949e22d" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Guptkashi             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 36.7/100<br>                 <b>Population:</b> 3,800<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 6}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_83b43485d48c6fb406e0aa4150f62050.setContent(html_9304c091c45e59b660718d8d1949e22d);
+                var html_b41568aba39a3dcd5e26b90ac68f3982 = $(`<div id="html_b41568aba39a3dcd5e26b90ac68f3982" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Guptkashi             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: green;">Low</span><br>                 <b>Risk Score:</b> 23.94/100<br>                 <b>Population:</b> 3,800<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 6}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_e7d4c94feba0222404aecde61e007604.setContent(html_b41568aba39a3dcd5e26b90ac68f3982);
             
         
 
-        circle_marker_9aff7d5a39bbcc584947d7fc3e9aa530.bindPopup(popup_83b43485d48c6fb406e0aa4150f62050)
+        circle_marker_40adb5cacab8b6e723c31ba86b651e92.bindPopup(popup_e7d4c94feba0222404aecde61e007604)
         ;
 
         
     
     
-            circle_marker_9aff7d5a39bbcc584947d7fc3e9aa530.bindTooltip(
+            circle_marker_40adb5cacab8b6e723c31ba86b651e92.bindTooltip(
                 `<div>
-                     Guptkashi — Moderate (36.7/100)
+                     Guptkashi — Low (23.94/100)
                  </div>`,
                 {
   "sticky": true,
@@ -328,32 +328,32 @@
             );
         
     
-            var circle_marker_f9d83580e4dafd411331cfedfb35fa23 = L.circleMarker(
+            var circle_marker_910f2848e9bc211e4ec8ed4bcf698749 = L.circleMarker(
                 [30.392, 78.985],
-                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 20, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 20, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_0769cda16d8e2db8a647fff07f9c63c1 = L.popup({
+        var popup_419a0811d8a35d87b89b6de46ddc37b0 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_0e956cfa3f8c76ce0be8c2dab0714696 = $(`<div id="html_0e956cfa3f8c76ce0be8c2dab0714696" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Agastyamuni             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 32.2/100<br>                 <b>Population:</b> 5,200<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 7}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_0769cda16d8e2db8a647fff07f9c63c1.setContent(html_0e956cfa3f8c76ce0be8c2dab0714696);
+                var html_52b41f3c6294726a03935b12ed9f0df7 = $(`<div id="html_52b41f3c6294726a03935b12ed9f0df7" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Agastyamuni             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: green;">Low</span><br>                 <b>Risk Score:</b> 23.08/100<br>                 <b>Population:</b> 5,200<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 7}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_419a0811d8a35d87b89b6de46ddc37b0.setContent(html_52b41f3c6294726a03935b12ed9f0df7);
             
         
 
-        circle_marker_f9d83580e4dafd411331cfedfb35fa23.bindPopup(popup_0769cda16d8e2db8a647fff07f9c63c1)
+        circle_marker_910f2848e9bc211e4ec8ed4bcf698749.bindPopup(popup_419a0811d8a35d87b89b6de46ddc37b0)
         ;
 
         
     
     
-            circle_marker_f9d83580e4dafd411331cfedfb35fa23.bindTooltip(
+            circle_marker_910f2848e9bc211e4ec8ed4bcf698749.bindTooltip(
                 `<div>
-                     Agastyamuni — Moderate (32.2/100)
+                     Agastyamuni — Low (23.08/100)
                  </div>`,
                 {
   "sticky": true,
@@ -361,32 +361,32 @@
             );
         
     
-            var circle_marker_c5f5ea5a51be7734ee195486dfc7728d = L.circleMarker(
+            var circle_marker_eee587d3031eb3748db1eb05a013519e = L.circleMarker(
                 [30.2844, 78.9811],
                 {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 20, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_e28253abdf78907b99fcc4b4ee96181d = L.popup({
+        var popup_a4736c44a1c1938d2918e5efd2c63d54 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_973fdcc6da9e07cd84e1e3175801120b = $(`<div id="html_973fdcc6da9e07cd84e1e3175801120b" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Rudraprayag Town             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: green;">Low</span><br>                 <b>Risk Score:</b> 25.9/100<br>                 <b>Population:</b> 9,300<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 8}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_e28253abdf78907b99fcc4b4ee96181d.setContent(html_973fdcc6da9e07cd84e1e3175801120b);
+                var html_51bc1f1f8574819c918c150b3f73bb0c = $(`<div id="html_51bc1f1f8574819c918c150b3f73bb0c" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Rudraprayag Town             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: green;">Low</span><br>                 <b>Risk Score:</b> 17.78/100<br>                 <b>Population:</b> 9,300<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 8}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_a4736c44a1c1938d2918e5efd2c63d54.setContent(html_51bc1f1f8574819c918c150b3f73bb0c);
             
         
 
-        circle_marker_c5f5ea5a51be7734ee195486dfc7728d.bindPopup(popup_e28253abdf78907b99fcc4b4ee96181d)
+        circle_marker_eee587d3031eb3748db1eb05a013519e.bindPopup(popup_a4736c44a1c1938d2918e5efd2c63d54)
         ;
 
         
     
     
-            circle_marker_c5f5ea5a51be7734ee195486dfc7728d.bindTooltip(
+            circle_marker_eee587d3031eb3748db1eb05a013519e.bindTooltip(
                 `<div>
-                     Rudraprayag Town — Low (25.9/100)
+                     Rudraprayag Town — Low (17.78/100)
                  </div>`,
                 {
   "sticky": true,
@@ -394,32 +394,32 @@
             );
         
     
-            var circle_marker_8c7a06afb85a021430871afb4795f812 = L.circleMarker(
+            var circle_marker_47cd9fff024cf1e3ce2736d613f6e3c0 = L.circleMarker(
                 [30.345, 78.972],
-                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_e89832170dc0ca990c6e75153a4f07fd = L.popup({
+        var popup_6f86d430bedf97e9a146a6526ee0999a = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_44d4c78023cbb9fb2b1271412989a2f4 = $(`<div id="html_44d4c78023cbb9fb2b1271412989a2f4" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Tilwara             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 39.8/100<br>                 <b>Population:</b> 2,400<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 9}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_e89832170dc0ca990c6e75153a4f07fd.setContent(html_44d4c78023cbb9fb2b1271412989a2f4);
+                var html_0d194898c1d10c67518aed98f410f0a2 = $(`<div id="html_0d194898c1d10c67518aed98f410f0a2" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Tilwara             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: green;">Low</span><br>                 <b>Risk Score:</b> 27.89/100<br>                 <b>Population:</b> 2,400<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 9}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_6f86d430bedf97e9a146a6526ee0999a.setContent(html_0d194898c1d10c67518aed98f410f0a2);
             
         
 
-        circle_marker_8c7a06afb85a021430871afb4795f812.bindPopup(popup_e89832170dc0ca990c6e75153a4f07fd)
+        circle_marker_47cd9fff024cf1e3ce2736d613f6e3c0.bindPopup(popup_6f86d430bedf97e9a146a6526ee0999a)
         ;
 
         
     
     
-            circle_marker_8c7a06afb85a021430871afb4795f812.bindTooltip(
+            circle_marker_47cd9fff024cf1e3ce2736d613f6e3c0.bindTooltip(
                 `<div>
-                     Tilwara — Moderate (39.8/100)
+                     Tilwara — Low (27.89/100)
                  </div>`,
                 {
   "sticky": true,
@@ -427,32 +427,32 @@
             );
         
     
-            var circle_marker_92cff8057c41b67c785ba6100249bebc = L.circleMarker(
+            var circle_marker_329e9ebfbb0f53416d95d6f508e375c1 = L.circleMarker(
                 [30.428, 79.015],
-                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_451d921baa3702c94de14222b32bde52 = L.popup({
+        var popup_6eedcaed5fcf3bae7072a4d5a8c35a09 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_998dadf23e161ec902ad4acc22511a85 = $(`<div id="html_998dadf23e161ec902ad4acc22511a85" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Chandrapuri             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 60.2/100<br>                 <b>Population:</b> 1,700<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 10}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_451d921baa3702c94de14222b32bde52.setContent(html_998dadf23e161ec902ad4acc22511a85);
+                var html_3c5a31eac9c6744d4bae673340670dc1 = $(`<div id="html_3c5a31eac9c6744d4bae673340670dc1" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Chandrapuri             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 41.47/100<br>                 <b>Population:</b> 1,700<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 10}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_6eedcaed5fcf3bae7072a4d5a8c35a09.setContent(html_3c5a31eac9c6744d4bae673340670dc1);
             
         
 
-        circle_marker_92cff8057c41b67c785ba6100249bebc.bindPopup(popup_451d921baa3702c94de14222b32bde52)
+        circle_marker_329e9ebfbb0f53416d95d6f508e375c1.bindPopup(popup_6eedcaed5fcf3bae7072a4d5a8c35a09)
         ;
 
         
     
     
-            circle_marker_92cff8057c41b67c785ba6100249bebc.bindTooltip(
+            circle_marker_329e9ebfbb0f53416d95d6f508e375c1.bindTooltip(
                 `<div>
-                     Chandrapuri — High (60.2/100)
+                     Chandrapuri — Moderate (41.47/100)
                  </div>`,
                 {
   "sticky": true,
@@ -460,32 +460,32 @@
             );
         
     
-            var circle_marker_4f817272d85ade18b4b2ca0c280ac93f = L.circleMarker(
+            var circle_marker_ebbc0db9710e5a9a13b150b27c68de97 = L.circleMarker(
                 [30.456, 79.034],
                 {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_243199d0f2578a58405bbe9aa96efd6a = L.popup({
+        var popup_6ce61baf3e6e5c39e078ab720dad1e23 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_ad21fdddac7e341db27cde4696046f29 = $(`<div id="html_ad21fdddac7e341db27cde4696046f29" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Syalsaur             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 46.6/100<br>                 <b>Population:</b> 1,100<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 11}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_243199d0f2578a58405bbe9aa96efd6a.setContent(html_ad21fdddac7e341db27cde4696046f29);
+                var html_32a576bf8243f52a81ef7373d2638c50 = $(`<div id="html_32a576bf8243f52a81ef7373d2638c50" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Syalsaur             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 32.06/100<br>                 <b>Population:</b> 1,100<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 11}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_6ce61baf3e6e5c39e078ab720dad1e23.setContent(html_32a576bf8243f52a81ef7373d2638c50);
             
         
 
-        circle_marker_4f817272d85ade18b4b2ca0c280ac93f.bindPopup(popup_243199d0f2578a58405bbe9aa96efd6a)
+        circle_marker_ebbc0db9710e5a9a13b150b27c68de97.bindPopup(popup_6ce61baf3e6e5c39e078ab720dad1e23)
         ;
 
         
     
     
-            circle_marker_4f817272d85ade18b4b2ca0c280ac93f.bindTooltip(
+            circle_marker_ebbc0db9710e5a9a13b150b27c68de97.bindTooltip(
                 `<div>
-                     Syalsaur — Moderate (46.6/100)
+                     Syalsaur — Moderate (32.06/100)
                  </div>`,
                 {
   "sticky": true,
@@ -493,32 +493,32 @@
             );
         
     
-            var circle_marker_834999e9d6e49c15dc9be86ab2258b54 = L.circleMarker(
+            var circle_marker_1d424efd42a1f5fec4c25c3475e336fb = L.circleMarker(
                 [30.567, 79.098],
-                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_29b9b490eb6bbc80321992941c539455 = L.popup({
+        var popup_b4ba0eba6bd16f0893ec7e46c8f965e4 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_1a8b359c3cddea6c9cd6af6787128879 = $(`<div id="html_1a8b359c3cddea6c9cd6af6787128879" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Kalimath             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 71.0/100<br>                 <b>Population:</b> 1,600<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 12}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_29b9b490eb6bbc80321992941c539455.setContent(html_1a8b359c3cddea6c9cd6af6787128879);
+                var html_9003ff6a95c663cf884cec4d6b70e840 = $(`<div id="html_9003ff6a95c663cf884cec4d6b70e840" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Kalimath             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 47.17/100<br>                 <b>Population:</b> 1,600<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 12}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_b4ba0eba6bd16f0893ec7e46c8f965e4.setContent(html_9003ff6a95c663cf884cec4d6b70e840);
             
         
 
-        circle_marker_834999e9d6e49c15dc9be86ab2258b54.bindPopup(popup_29b9b490eb6bbc80321992941c539455)
+        circle_marker_1d424efd42a1f5fec4c25c3475e336fb.bindPopup(popup_b4ba0eba6bd16f0893ec7e46c8f965e4)
         ;
 
         
     
     
-            circle_marker_834999e9d6e49c15dc9be86ab2258b54.bindTooltip(
+            circle_marker_1d424efd42a1f5fec4c25c3475e336fb.bindTooltip(
                 `<div>
-                     Kalimath — High (71.0/100)
+                     Kalimath — Moderate (47.17/100)
                  </div>`,
                 {
   "sticky": true,
@@ -526,32 +526,32 @@
             );
         
     
-            var circle_marker_bbdcb3d9098622f9e90dc88e965a1432 = L.circleMarker(
+            var circle_marker_12153992a3d35c358768f3eccf61787a = L.circleMarker(
                 [30.512, 79.11],
-                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_03e5fdd8338add5b4b8ddd6e0235d2e0 = L.popup({
+        var popup_59f494bd152b657a1930fb9858bbc561 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_f7e3f971ce5c1837c58f1d18981c747c = $(`<div id="html_f7e3f971ce5c1837c58f1d18981c747c" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Mansuna             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 65.5/100<br>                 <b>Population:</b> 2,150<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 13}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_03e5fdd8338add5b4b8ddd6e0235d2e0.setContent(html_f7e3f971ce5c1837c58f1d18981c747c);
+                var html_7744998394c66a9d022bd5c44a41ad63 = $(`<div id="html_7744998394c66a9d022bd5c44a41ad63" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Mansuna             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 42.83/100<br>                 <b>Population:</b> 2,150<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 13}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_59f494bd152b657a1930fb9858bbc561.setContent(html_7744998394c66a9d022bd5c44a41ad63);
             
         
 
-        circle_marker_bbdcb3d9098622f9e90dc88e965a1432.bindPopup(popup_03e5fdd8338add5b4b8ddd6e0235d2e0)
+        circle_marker_12153992a3d35c358768f3eccf61787a.bindPopup(popup_59f494bd152b657a1930fb9858bbc561)
         ;
 
         
     
     
-            circle_marker_bbdcb3d9098622f9e90dc88e965a1432.bindTooltip(
+            circle_marker_12153992a3d35c358768f3eccf61787a.bindTooltip(
                 `<div>
-                     Mansuna — High (65.5/100)
+                     Mansuna — Moderate (42.83/100)
                  </div>`,
                 {
   "sticky": true,
@@ -559,32 +559,32 @@
             );
         
     
-            var circle_marker_ed51e7321bd4b710c6a8ca2fa95da436 = L.circleMarker(
+            var circle_marker_6649b496bdd93f6f832b3aa5b0486254 = L.circleMarker(
                 [30.556, 79.143],
-                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_e0a07327c8f6fa6b7b9ef29f1e5025fa = L.popup({
+        var popup_384869b03479247a5a10e4a612510e88 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_5f55f63047825a0f1b2946e2406546ef = $(`<div id="html_5f55f63047825a0f1b2946e2406546ef" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Ransi             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: red;">Critical</span><br>                 <b>Risk Score:</b> 82.3/100<br>                 <b>Population:</b> 950<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 14}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_e0a07327c8f6fa6b7b9ef29f1e5025fa.setContent(html_5f55f63047825a0f1b2946e2406546ef);
+                var html_0f88161a682bec597e592fa988b3920d = $(`<div id="html_0f88161a682bec597e592fa988b3920d" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Ransi             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 54.53/100<br>                 <b>Population:</b> 950<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 14}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_384869b03479247a5a10e4a612510e88.setContent(html_0f88161a682bec597e592fa988b3920d);
             
         
 
-        circle_marker_ed51e7321bd4b710c6a8ca2fa95da436.bindPopup(popup_e0a07327c8f6fa6b7b9ef29f1e5025fa)
+        circle_marker_6649b496bdd93f6f832b3aa5b0486254.bindPopup(popup_384869b03479247a5a10e4a612510e88)
         ;
 
         
     
     
-            circle_marker_ed51e7321bd4b710c6a8ca2fa95da436.bindTooltip(
+            circle_marker_6649b496bdd93f6f832b3aa5b0486254.bindTooltip(
                 `<div>
-                     Ransi — Critical (82.3/100)
+                     Ransi — High (54.53/100)
                  </div>`,
                 {
   "sticky": true,
@@ -592,32 +592,32 @@
             );
         
     
-            var circle_marker_2d880578176dfc8d2e22269918ea85e0 = L.circleMarker(
+            var circle_marker_b27dae5b4364c332c2b68265429277c9 = L.circleMarker(
                 [30.641, 78.977],
                 {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_6b557e2540389593f97b9d0a270faad3 = L.popup({
+        var popup_c48adf431fe0ce2d0d7e7123a1d6c42d = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_f93dce8be1068f8d1fa58fe279e4864a = $(`<div id="html_f93dce8be1068f8d1fa58fe279e4864a" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Triyuginarayan             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 48.7/100<br>                 <b>Population:</b> 1,350<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 15}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_6b557e2540389593f97b9d0a270faad3.setContent(html_f93dce8be1068f8d1fa58fe279e4864a);
+                var html_feb7a46647a7302d0d6c827305d64621 = $(`<div id="html_feb7a46647a7302d0d6c827305d64621" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Triyuginarayan             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 32.67/100<br>                 <b>Population:</b> 1,350<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 15}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_c48adf431fe0ce2d0d7e7123a1d6c42d.setContent(html_feb7a46647a7302d0d6c827305d64621);
             
         
 
-        circle_marker_2d880578176dfc8d2e22269918ea85e0.bindPopup(popup_6b557e2540389593f97b9d0a270faad3)
+        circle_marker_b27dae5b4364c332c2b68265429277c9.bindPopup(popup_c48adf431fe0ce2d0d7e7123a1d6c42d)
         ;
 
         
     
     
-            circle_marker_2d880578176dfc8d2e22269918ea85e0.bindTooltip(
+            circle_marker_b27dae5b4364c332c2b68265429277c9.bindTooltip(
                 `<div>
-                     Triyuginarayan — Moderate (48.7/100)
+                     Triyuginarayan — Moderate (32.67/100)
                  </div>`,
                 {
   "sticky": true,
@@ -625,32 +625,32 @@
             );
         
     
-            var circle_marker_1cbcb70a80dcf4c3d770a60b710a3b14 = L.circleMarker(
+            var circle_marker_3e8e66ab7d5eeaf5343b9c7fa52b4393 = L.circleMarker(
                 [30.505, 79.13],
-                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_495216f3d0d2125084c8c53078b675c8 = L.popup({
+        var popup_c208b579b7a1a7afe3ab068e457a4b90 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_06d129a4db12e2c6af3ca6e58864bd9f = $(`<div id="html_06d129a4db12e2c6af3ca6e58864bd9f" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Sari             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: orange;">High</span><br>                 <b>Risk Score:</b> 67.5/100<br>                 <b>Population:</b> 850<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 16}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_495216f3d0d2125084c8c53078b675c8.setContent(html_06d129a4db12e2c6af3ca6e58864bd9f);
+                var html_7a5da0429943acf02717eb7727a47188 = $(`<div id="html_7a5da0429943acf02717eb7727a47188" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Sari             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 44.36/100<br>                 <b>Population:</b> 850<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 16}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_c208b579b7a1a7afe3ab068e457a4b90.setContent(html_7a5da0429943acf02717eb7727a47188);
             
         
 
-        circle_marker_1cbcb70a80dcf4c3d770a60b710a3b14.bindPopup(popup_495216f3d0d2125084c8c53078b675c8)
+        circle_marker_3e8e66ab7d5eeaf5343b9c7fa52b4393.bindPopup(popup_c208b579b7a1a7afe3ab068e457a4b90)
         ;
 
         
     
     
-            circle_marker_1cbcb70a80dcf4c3d770a60b710a3b14.bindTooltip(
+            circle_marker_3e8e66ab7d5eeaf5343b9c7fa52b4393.bindTooltip(
                 `<div>
-                     Sari — High (67.5/100)
+                     Sari — Moderate (44.36/100)
                  </div>`,
                 {
   "sticky": true,
@@ -658,32 +658,32 @@
             );
         
     
-            var circle_marker_f6988f5c4e271b8e96bcb2f2cca9a9f5 = L.circleMarker(
+            var circle_marker_7acc1df44f90258950aa51f2910250b7 = L.circleMarker(
                 [30.485, 79.176],
-                {"bubblingMouseEvents": true, "color": "yellow", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "yellow", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7, "stroke": true, "weight": 1.5}
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_39fb76390d0c41b972c61effbb667c6d = L.popup({
+        var popup_b6da008164bd8e37c0b5a779e9be2ffe = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_2c0ae69de86c8517026e76031e08949a = $(`<div id="html_2c0ae69de86c8517026e76031e08949a" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Chopta             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: yellow;">Moderate</span><br>                 <b>Risk Score:</b> 45.4/100<br>                 <b>Population:</b> 450<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 17}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_39fb76390d0c41b972c61effbb667c6d.setContent(html_2c0ae69de86c8517026e76031e08949a);
+                var html_f521839f5e3c806df68040c79bf198cb = $(`<div id="html_f521839f5e3c806df68040c79bf198cb" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Chopta             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: green;">Low</span><br>                 <b>Risk Score:</b> 29.61/100<br>                 <b>Population:</b> 450<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 17}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_b6da008164bd8e37c0b5a779e9be2ffe.setContent(html_f521839f5e3c806df68040c79bf198cb);
             
         
 
-        circle_marker_f6988f5c4e271b8e96bcb2f2cca9a9f5.bindPopup(popup_39fb76390d0c41b972c61effbb667c6d)
+        circle_marker_7acc1df44f90258950aa51f2910250b7.bindPopup(popup_b6da008164bd8e37c0b5a779e9be2ffe)
         ;
 
         
     
     
-            circle_marker_f6988f5c4e271b8e96bcb2f2cca9a9f5.bindTooltip(
+            circle_marker_7acc1df44f90258950aa51f2910250b7.bindTooltip(
                 `<div>
-                     Chopta — Moderate (45.4/100)
+                     Chopta — Low (29.61/100)
                  </div>`,
                 {
   "sticky": true,
@@ -691,32 +691,32 @@
             );
         
     
-            var circle_marker_ab0fbe4dc1b293ced7d94c442d0915ca = L.circleMarker(
+            var circle_marker_707f0e6555ce764415aa4623ff5fdc54 = L.circleMarker(
                 [30.25, 78.85],
                 {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15, "stroke": true, "weight": 1.5}
-            ).addTo(map_93dc1de8424774749235049b8605e7d5);
+            ).addTo(map_3f2166a22030446400207f241b3c0a61);
         
     
-        var popup_56b4acc1c9de59c20b636f415e7aad62 = L.popup({
+        var popup_6d30d332bf9d682fc4a6c00c998e0927 = L.popup({
   "maxWidth": 250,
 });
 
         
             
-                var html_7dac6e2a77379ef70ce7307ebfc13511 = $(`<div id="html_7dac6e2a77379ef70ce7307ebfc13511" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Sumari             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: green;">Low</span><br>                 <b>Risk Score:</b> 22.9/100<br>                 <b>Population:</b> 3,100<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 18}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
-                popup_56b4acc1c9de59c20b636f415e7aad62.setContent(html_7dac6e2a77379ef70ce7307ebfc13511);
+                var html_e35dc587b6c965274fd299c9287f71da = $(`<div id="html_e35dc587b6c965274fd299c9287f71da" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial, sans-serif; min-width: 190px; padding: 4px;">             <h3 style="margin: 0 0 6px 0; color: #2c3e50; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px;">                 Sumari             </h3>             <div style="font-size: 12px; line-height: 1.5; color: #34495e; margin-bottom: 8px;">                 <b>Risk Level:</b> <span style="font-weight: bold; color: green;">Low</span><br>                 <b>Risk Score:</b> 15.72/100<br>                 <b>Population:</b> 3,100<br>                 <b>District:</b> Rudraprayag             </div>             <button onclick="window.parent.postMessage({type: 'village_click', id: 18}, '*')"                     style="width: 100%; background-color: #2980b9; color: white; border: none;                             padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">                 Select Village &rarr;             </button>         </div>         </div>`)[0];
+                popup_6d30d332bf9d682fc4a6c00c998e0927.setContent(html_e35dc587b6c965274fd299c9287f71da);
             
         
 
-        circle_marker_ab0fbe4dc1b293ced7d94c442d0915ca.bindPopup(popup_56b4acc1c9de59c20b636f415e7aad62)
+        circle_marker_707f0e6555ce764415aa4623ff5fdc54.bindPopup(popup_6d30d332bf9d682fc4a6c00c998e0927)
         ;
 
         
     
     
-            circle_marker_ab0fbe4dc1b293ced7d94c442d0915ca.bindTooltip(
+            circle_marker_707f0e6555ce764415aa4623ff5fdc54.bindTooltip(
                 `<div>
-                     Sumari — Low (22.9/100)
+                     Sumari — Low (15.72/100)
                  </div>`,
                 {
   "sticky": true,
