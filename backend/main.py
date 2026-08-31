@@ -31,7 +31,7 @@ def run_startup_diagnostics():
     lat_str = f"{topo_health.latency_ms:.0f}ms" if topo_health.latency_ms is not None else "N/A"
     print(f" [1/3] OpenTopoData (Elevation):   {mode_str:<10} ({topo_health.message}, {lat_str})")
 
-    weather_health = probe_openweathermap()
+    weather_health = probe_openweathermap(30.4934, 79.0547)
     mode_str = f"[{weather_health.mode.upper()}]"
     lat_str = f"{weather_health.latency_ms:.0f}ms" if weather_health.latency_ms is not None else "N/A"
     print(f" [2/3] OpenWeatherMap (Weather):   {mode_str:<10} ({weather_health.message}, {lat_str})")

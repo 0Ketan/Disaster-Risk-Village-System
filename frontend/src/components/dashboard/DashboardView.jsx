@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Shield, AlertTriangle, Users, Home, MapPin, RefreshCw, Layers, CheckCircle2 } from 'lucide-react';
+import { Shield, AlertTriangle, Users, Home, MapPin, RefreshCw, Layers, CheckCircle2, Clock } from 'lucide-react';
 import VillageTable from './VillageTable';
 import WarningBadge from '../common/WarningBadge';
 
@@ -12,7 +12,10 @@ export const DashboardView = ({
   summary, 
   onVillageSelect,
   onRefresh,
-  isRefreshing = false 
+  isRefreshing = false,
+  lastSyncTime = null,
+  lastUpdated = null,
+  liveFeedActive = false
 }) => {
   const [selectedState, setSelectedState] = useState('All States');
   const [selectedDistrict, setSelectedDistrict] = useState('All Districts');
@@ -95,16 +98,41 @@ export const DashboardView = ({
 
           {/* Refresh Action & Provenance */}
           <div className="flex items-center gap-3">
+            {/* Live Feed Indicator */}
+            {liveFeedActive && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-700">Live Weather Feed</span>
+              </div>
+            )}
+
+            {/* Last Sync / Update Time */}
+            {(lastUpdated || lastSyncTime) && (
+              <div className="flex items-center gap-1 text-[11px] text-on-surface-variant bg-surface px-2.5 py-1 rounded-lg border border-outline-variant/60">
+                <Clock className="w-3 h-3 text-primary" />
+                <span>Updated: {new Date(lastUpdated || lastSyncTime).toLocaleTimeString()}</span>
+              </div>
+            )}
+
             {hasFallback && (
               <WarningBadge text="⚠ Cached data" size="sm" />
             )}
             <button
               onClick={onRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-surface-container rounded-lg border border-outline-variant transition-colors"
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                isRefreshing
+                  ? 'bg-surface-container text-on-surface-variant/50 border-outline-variant cursor-not-allowed'
+                  : 'bg-primary text-white border-primary hover:bg-primary-hover active:scale-95 shadow-xs'
+              }`}
+              title="Fetch live weather and recalculate risk scores"
+              aria-label="Refresh Data"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-              <span>Refresh</span>
+              <span>Refresh Data</span>
             </button>
           </div>
         </div>

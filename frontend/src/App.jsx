@@ -4,7 +4,14 @@ import Sidebar from './components/layout/Sidebar';
 import MapView from './components/map/MapView';
 import DetailDrawer from './components/drawer/DetailDrawer';
 import DashboardView from './components/dashboard/DashboardView';
-import { getVillages, getVillageById, getDashboardSummary } from './api/villages';
+import { 
+  getVillages, 
+  getVillageById, 
+  getDashboardSummary, 
+  syncWeather, 
+  getSyncStatus, 
+  refreshVillages 
+} from './api/villages';
 import { getApiHealthStatus } from './api/health';
 
 /**
@@ -21,6 +28,10 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
+  const [lastSyncTime, setLastSyncTime] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [liveFeedActive, setLiveFeedActive] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
 
   // Fetch all initial data
   const fetchData = useCallback(async () => {
@@ -33,6 +44,10 @@ export const App = () => {
 
       if (villagesRes && villagesRes.villages) {
         setVillages(villagesRes.villages);
+        if (villagesRes.last_updated) {
+          setLastUpdated(villagesRes.last_updated);
+          setLastSyncTime(villagesRes.last_updated);
+        }
       }
 
       if (healthRes && healthRes.services) {
@@ -60,8 +75,31 @@ export const App = () => {
       }).catch(console.warn);
     }, 30000);
 
-    return () => clearInterval(interval);
+    // Periodic sync status check every 60 seconds
+    const syncInterval = setInterval(() => {
+      getSyncStatus().then((res) => {
+        if (res) {
+          setLastSyncTime(res.last_sync_timestamp);
+          setLastUpdated((prev) => prev || res.last_sync_timestamp);
+          setLiveFeedActive(res.status === 'active');
+        }
+      }).catch(console.warn);
+    }, 60000);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(syncInterval);
+    };
   }, [fetchData]);
+
+  // Auto-dismiss toast after 8 seconds
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = setTimeout(() => {
+      setToastMessage(null);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
 
   // When selectedVillageId changes, load detailed village record
   useEffect(() => {
@@ -105,10 +143,52 @@ export const App = () => {
     setSelectedVillage(null);
   }, []);
 
-  const handleRefresh = useCallback(() => {
+  const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    fetchData();
-  }, [fetchData]);
+    try {
+      const refreshResult = await refreshVillages();
+      const timestamp = refreshResult?.last_updated || new Date().toISOString();
+      setLastUpdated(timestamp);
+      setLastSyncTime(timestamp);
+
+      if (refreshResult && refreshResult.status === 'success' && Array.isArray(refreshResult.villages) && refreshResult.villages.length > 0) {
+        setVillages(refreshResult.villages);
+        setLiveFeedActive(refreshResult._source === 'live_refresh' || refreshResult._source === 'live');
+        
+        // Refresh dashboard summary statistics to stay in sync
+        getDashboardSummary().then((sumRes) => {
+          if (sumRes) setSummary(sumRes);
+        }).catch(console.warn);
+
+        // Show toast alert for dynamic red zone escalations
+        const dynamicRedZones = refreshResult.villages.filter(
+          (v) => (v.risk_level === 'Critical' || v.risk_score >= 81) && (v.live_rainfall_mm > 0 || v.dynamic_modifier_applied)
+        );
+        if (dynamicRedZones.length > 0) {
+          const names = dynamicRedZones.slice(0, 3).map((v) => v.name).join(', ');
+          setToastMessage({
+            type: 'alert',
+            text: `Dynamic Alert: ${names}${dynamicRedZones.length > 3 ? ' and others' : ''} escalated to Red Zone.`
+          });
+        }
+      } else {
+        // Fallback response or degraded weather service
+        setLiveFeedActive(false);
+        setToastMessage({
+          type: 'warning',
+          text: 'Weather API unavailable. Showing cached data.'
+        });
+      }
+    } catch (err) {
+      console.warn('Sync refresh failed:', err);
+      setToastMessage({
+        type: 'warning',
+        text: 'Weather API unavailable. Showing cached data.'
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
 
   // Derived counts for navbar
   const criticalCount = useMemo(() => {
@@ -140,6 +220,11 @@ export const App = () => {
         highCount={highCount}
         populationAtRisk={populationAtRisk}
         hasFallbackData={hasFallbackData}
+        lastSyncTime={lastSyncTime}
+        lastUpdated={lastUpdated || lastSyncTime}
+        liveFeedActive={liveFeedActive}
+        onRefresh={handleRefresh}
+        isRefreshing={isRefreshing}
       />
 
       {/* Main Content Area */}
@@ -198,9 +283,42 @@ export const App = () => {
             onVillageSelect={handleVillageSelect}
             onRefresh={handleRefresh}
             isRefreshing={isRefreshing}
+            lastSyncTime={lastSyncTime}
+            lastUpdated={lastUpdated || lastSyncTime}
+            liveFeedActive={liveFeedActive}
           />
         )}
       </div>
+      
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-[9999] max-w-md animate-slide-up" role="alert">
+          <div className={`px-5 py-3 rounded-xl shadow-2xl border flex items-center gap-3 ${
+            (typeof toastMessage === 'object' && toastMessage?.type === 'warning')
+              ? 'bg-amber-600 text-white border-amber-500 shadow-amber-900/20'
+              : 'bg-rose-600 text-white border-rose-500 shadow-rose-900/20'
+          }`}>
+            <span className="text-lg">
+              {(typeof toastMessage === 'object' && toastMessage?.type === 'warning') ? '⚠️' : '🚨'}
+            </span>
+            <div className="flex-1">
+              <div className="font-bold text-xs uppercase tracking-wider">
+                {(typeof toastMessage === 'object' && toastMessage?.type === 'warning') ? 'System Notice' : 'Dynamic Risk Alert'}
+              </div>
+              <div className="text-xs text-white/95 mt-0.5 font-medium">
+                {typeof toastMessage === 'string' ? toastMessage : toastMessage?.text}
+              </div>
+            </div>
+            <button 
+              onClick={() => setToastMessage(null)}
+              className="ml-2 text-white/70 hover:text-white text-sm font-bold p-1 rounded transition-colors"
+              aria-label="Close notification"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

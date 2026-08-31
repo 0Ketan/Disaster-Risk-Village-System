@@ -1,11 +1,11 @@
 import React from 'react';
-import { Shield, Map, LayoutDashboard, AlertTriangle, Users } from 'lucide-react';
+import { Shield, Map, LayoutDashboard, AlertTriangle, Users, RefreshCw, Clock } from 'lucide-react';
 import WarningBadge from '../common/WarningBadge';
 
 /**
  * Top Navigation Bar (60px height)
  * Features VillageShield branding, active view toggle, global risk counters,
- * and provenance status indicator.
+ * on-demand Refresh Data button, timestamp, and provenance status indicator.
  */
 export const Navbar = ({ 
   activeView, 
@@ -14,7 +14,12 @@ export const Navbar = ({
   criticalCount = 0, 
   highCount = 0,
   populationAtRisk = 0,
-  hasFallbackData = false 
+  hasFallbackData = false,
+  lastSyncTime = null,
+  lastUpdated = null,
+  liveFeedActive = false,
+  onRefresh,
+  isRefreshing = false
 }) => {
   const formatPop = (num) => {
     if (!num) return '0';
@@ -23,10 +28,12 @@ export const Navbar = ({
     return num.toLocaleString();
   };
 
+  const activeTimestamp = lastUpdated || lastSyncTime;
+
   return (
     <header className="fixed top-0 left-0 right-0 h-nav bg-primary text-white z-50 flex items-center justify-between px-4 sm:px-6 shadow-md border-b border-primary-container">
       {/* Brand & Tabs */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 sm:gap-6">
         <div 
           onClick={() => setActiveView('map')}
           className="flex items-center gap-2.5 font-bold text-lg cursor-pointer tracking-tight select-none"
@@ -66,8 +73,34 @@ export const Navbar = ({
         </nav>
       </div>
 
-      {/* Global Counters & Provenance Indicator */}
-      <div className="flex items-center gap-3 sm:gap-5">
+      {/* Global Actions, Counters & Provenance Indicator */}
+      <div className="flex items-center gap-2.5 sm:gap-4">
+        {/* On-Demand Refresh Button */}
+        {onRefresh && (
+          <button
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+              isRefreshing
+                ? 'bg-white/10 text-white/50 border-white/10 cursor-not-allowed'
+                : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/40 hover:border-emerald-400 active:scale-95 shadow-xs'
+            }`}
+            title="Fetch live weather and recalculate dynamic risk scores"
+            aria-label="Refresh Data"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>Refresh Data</span>
+          </button>
+        )}
+
+        {/* Last Updated Timestamp */}
+        {activeTimestamp && (
+          <div className="hidden xl:flex items-center gap-1 text-[11px] text-primary-dim/90 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
+            <Clock className="w-3 h-3 text-emerald-400" />
+            <span>Updated: {new Date(activeTimestamp).toLocaleTimeString()}</span>
+          </div>
+        )}
+
         {/* Monitored Count */}
         <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs">
           <span className="text-primary-dim">Monitored:</span>
@@ -82,10 +115,21 @@ export const Navbar = ({
 
         {/* Population at Risk */}
         {populationAtRisk > 0 && (
-          <div className="hidden xl:flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs">
+          <div className="hidden 2xl:flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs">
             <Users className="w-3.5 h-3.5 text-primary-dim" />
             <span className="text-primary-dim">At Risk:</span>
             <span className="font-bold text-white">{formatPop(populationAtRisk)}</span>
+          </div>
+        )}
+
+        {/* Live Sync Indicator */}
+        {liveFeedActive && (
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-xs">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+            </span>
+            <span className="text-emerald-300 font-semibold">Live</span>
           </div>
         )}
 

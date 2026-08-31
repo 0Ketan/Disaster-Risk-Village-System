@@ -9,6 +9,8 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import threading
+import time as _time
 
 # Add project root to sys.path
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -17,6 +19,13 @@ if BASE_DIR not in sys.path:
 
 from backend.api.health import router as health_router
 from backend.api.endpoints import router as api_router
+from backend.api.sync import router as sync_router
+from backend.engines.dynamic_risk_engine import (
+    recalculate_all_villages_dynamic,
+    refresh_dynamic_state,
+    get_last_updated_time,
+    LAST_UPDATED_TIME,
+)
 
 logger = logging.getLogger("villageshield")
 logging.basicConfig(level=logging.INFO)
@@ -52,8 +61,9 @@ async def global_exception_handler(request: Request, exc: Exception):
         }
     )
 
-# Include API Routers
+# Include API Routers (sync_router first so /villages/dynamic and /refresh take precedence)
 app.include_router(health_router)
+app.include_router(sync_router)
 app.include_router(api_router)
 
 
@@ -66,5 +76,11 @@ def root():
         "docs": "/docs",
         "api_health": "/api/health",
         "villages": "/api/villages",
-        "summary": "/api/dashboard/summary"
+        "summary": "/api/dashboard/summary",
+        "refresh": "/api/refresh",
+        "sync_weather": "/api/sync-weather",
+        "sync_status": "/api/sync-status",
+        "dynamic_villages": "/api/villages/dynamic",
+        "last_updated": get_last_updated_time(),
     }
+

@@ -1,19 +1,43 @@
-﻿id,name,district,state,latitude,longitude,population,slope_degrees,annual_rainfall_mm,past_landslides,flood_risk_index,road_access_score
-1,Ukhimath,Rudraprayag,Uttarakhand,30.4934,79.0547,2100,35,2800,4,8,3
-2,Kedarnath,Rudraprayag,Uttarakhand,30.7352,79.0669,600,42,3100,5,9,1
-3,Gaurikund,Rudraprayag,Uttarakhand,30.5833,79.0333,1400,38,2950,4,8,2
-4,Phata,Rudraprayag,Uttarakhand,30.5400,79.0300,1850,28,2400,3,6,4
-5,Sonprayag,Rudraprayag,Uttarakhand,30.6300,78.9900,1200,36,2900,4,9,3
-6,Guptkashi,Rudraprayag,Uttarakhand,30.5267,79.0743,3800,16,1900,1,3,8
-7,Agastyamuni,Rudraprayag,Uttarakhand,30.3920,78.9850,5200,12,1750,0,4,7
-8,Rudraprayag Town,Rudraprayag,Uttarakhand,30.2844,78.9811,9300,10,1600,0,3,9
-9,Tilwara,Rudraprayag,Uttarakhand,30.3450,78.9720,2400,14,1800,1,5,7
-10,Chandrapuri,Rudraprayag,Uttarakhand,30.4280,79.0150,1700,26,2250,2,7,5
-11,Syalsaur,Rudraprayag,Uttarakhand,30.4560,79.0340,1100,20,2100,1,5,6
-12,Kalimath,Rudraprayag,Uttarakhand,30.5670,79.0980,1600,33,2600,3,6,3
-13,Mansuna,Rudraprayag,Uttarakhand,30.5120,79.1100,2150,30,2500,3,5,4
-14,Ransi,Rudraprayag,Uttarakhand,30.5560,79.1430,950,37,2850,4,7,2
-15,Triyuginarayan,Rudraprayag,Uttarakhand,30.6410,78.9770,1350,24,2200,1,4,5
-16,Sari,Rudraprayag,Uttarakhand,30.5050,79.1300,850,31,2550,3,5,3
-17,Chopta,Rudraprayag,Uttarakhand,30.4850,79.1760,450,22,2300,1,3,6
-18,Sumari,Rudraprayag,Uttarakhand,30.2500,78.8500,3100,8,1500,0,2,8
+id,name,district,state,latitude,longitude,population,slope_degrees,annual_rainfall_mm,past_landslides,flood_risk_index,road_access_score,vulnerability_index
+1,Ukhimath,Rudraprayag,Uttarakhand,30.4934,79.0547,2100,35,2800,4,8,3,7
+2,Kedarnath,Rudraprayag,Uttarakhand,30.7352,79.0669,600,42,3100,5,9,1,9
+3,Gaurikund,Rudraprayag,Uttarakhand,30.5833,79.0333,1400,38,2950,4,8,2,8
+4,Phata,Rudraprayag,Uttarakhand,30.5400,79.0300,1850,28,2400,3,6,4,6
+5,Sonprayag,Rudraprayag,Uttarakhand,30.6300,78.9900,1200,36,2900,4,9,3,7
+6,Guptkashi,Rudraprayag,Uttarakhand,30.5267,79.0743,3800,16,1900,1,3,8,4
+7,Agastyamuni,Rudraprayag,Uttarakhand,30.3920,78.9850,5200,12,1750,0,4,7,3
+8,Rudraprayag Town,Rudraprayag,Uttarakhand,30.2844,78.9811,9300,10,1600,0,3,9,2
+9,Tilwara,Rudraprayag,Uttarakhand,30.3450,78.9720,2400,14,1800,1,5,7,5
+10,Chandrapuri,Rudraprayag,Uttarakhand,30.4280,79.0150,1700,26,2250,2,7,5,4
+11,Syalsaur,Rudraprayag,Uttarakhand,30.4560,79.0340,1100,20,2100,1,5,6,5
+12,Kalimath,Rudraprayag,Uttarakhand,30.5670,79.0980,1600,33,2600,3,6,3,6
+13,Mansuna,Rudraprayag,Uttarakhand,30.5120,79.1100,2150,30,2500,3,5,4,6
+14,Ransi,Rudraprayag,Uttarakhand,30.5560,79.1430,950,37,2850,4,7,2,7
+15,Triyuginarayan,Rudraprayag,Uttarakhand,30.6410,78.9770,1350,24,2200,1,4,5,5
+16,Sari,Rudraprayag,Uttarakhand,30.5050,79.1300,850,31,2550,3,5,3,6
+17,Chopta,Rudraprayag,Uttarakhand,30.4850,79.1760,450,22,2300,1,3,6,4
+18,Sumari,Rudraprayag,Uttarakhand,30.2500,78.8500,3100,8,1500,0,2,8,3
+19,Mundakkai,Wayanad,Kerala,11.5800,76.0300,950,38,3200,6,7,3,8
+20,Chooralmala,Wayanad,Kerala,11.5750,76.0250,1200,42,3500,8,8,2,9
+21,Meppadi,Wayanad,Kerala,11.5100,76.0700,4100,22,2800,2,6,6,5
+22,Vythiri,Wayanad,Kerala,11.5200,76.0400,3200,18,2600,1,5,7,4
+23,Kalpetta,Wayanad,Kerala,11.6000,76.0800,28000,8,2200,0,3,9,2
+24,Mananthavady,Wayanad,Kerala,11.8000,76.0100,18000,12,2400,1,4,8,3
+25,Sulthan Bathery,Wayanad,Kerala,11.6800,76.2600,22000,6,2100,0,3,9,2
+26,Nenmeni,Wayanad,Kerala,11.6100,75.9800,1800,28,2900,3,6,5,6
+27,Padinharathara,Wayanad,Kerala,11.5900,76.0600,2100,32,3100,4,7,4,7
+28,Ambalavayal,Wayanad,Kerala,11.6500,76.1200,3500,15,2300,1,4,7,4
+29,Thrissilery,Wayanad,Kerala,11.7200,75.9600,1600,25,2700,2,5,5,5
+30,Vellamunda,Wayanad,Kerala,11.6300,76.1500,2800,20,2500,2,5,6,4
+31,Kalimpong,Darjeeling,West Bengal,27.0660,88.4682,47200,28,2800,3,5,7,5
+32,Kurseong,Darjeeling,West Bengal,26.8806,88.2773,35000,32,2600,2,5,6,5
+33,Mirik,Darjeeling,West Bengal,26.8882,88.1777,8000,25,2400,1,4,7,4
+34,Jorebunglow,Darjeeling,West Bengal,27.0230,88.2480,5200,38,2700,3,6,5,6
+35,Sukhiapokhri,Darjeeling,West Bengal,26.9700,88.1200,3800,35,2500,2,5,4,6
+36,Bijanbari,Darjeeling,West Bengal,27.0100,88.3000,4200,30,2600,2,5,5,5
+37,Lopchu,Darjeeling,West Bengal,27.0500,88.3500,2800,33,2700,3,5,4,6
+38,Takdah,Darjeeling,West Bengal,26.9500,88.2300,1900,36,2600,2,6,4,7
+39,Tung,Darjeeling,West Bengal,26.9200,88.2000,1400,40,2800,4,6,3,7
+40,Rohini,Darjeeling,West Bengal,26.8500,88.2500,2100,28,2400,2,5,5,5
+41,Pankhabari,Darjeeling,West Bengal,26.9800,88.2800,3100,22,2300,1,4,6,4
+42,Rangli Rangliot,Darjeeling,West Bengal,27.0800,88.4000,2600,35,2700,3,6,4,7

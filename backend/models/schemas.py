@@ -9,6 +9,7 @@ class ScoreBreakdown(BaseModel):
     flood_score: float = Field(..., ge=0.0, le=10.0, description="Normalized flood risk factor score (0-10)")
     road_score: float = Field(..., ge=0.0, le=10.0, description="Normalized road isolation score (0-10)")
 
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -25,15 +26,29 @@ class Village(BaseModel):
     past_landslides: int = Field(..., ge=0)
     flood_risk_index: float = Field(..., ge=0)
     road_access_score: float = Field(..., ge=0, le=10)
+    vulnerability_index: float = 5.0
     elevation_m: Optional[float] = None
     risk_score: float = Field(..., ge=0.0, le=100.0)
     risk_level: str  # "Critical" | "High" | "Moderate" | "Low"
     priority: str    # "Immediate" | "Short-term" | "Medium-term" | "Monitor"
-    score_breakdown: ScoreBreakdown
     relocation_required: bool = False
-    _source: str = "live"  # "live" | "fallback"
+    score_breakdown: ScoreBreakdown
+    # Additional fields from risk_engine output
+    vulnerability_score: float = Field(ge=0.0, le=10.0, default=5.0)
+    landslide_zone: str = Field(default="Green")  # "Red" | "Orange" | "Green"
+    flood_zone: str = Field(default="Green")      # "Red" | "Orange" | "Green"
+    cloudburst_zone: str = Field(default="Green") # "Red" | "Orange" | "Green"
+    composite_hazard_label: str = Field(default="Low Multi-Hazard Exposure")
+    # Dynamic weather fields
+    live_rainfall_mm: Optional[float] = None
+    rainfall_source: Optional[str] = None
+    weather_timestamp: Optional[str] = None
+    dynamic_risk_score: Optional[float] = None
+    dynamic_modifier_applied: bool = False
+    relocation_precomputed: Optional[Any] = None
+    _source: Optional[str] = None  # "live" | "fallback"
 
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, extra='allow')
 
 
 class RelocationSiteBreakdown(BaseModel):
@@ -59,7 +74,7 @@ class RelocationSite(BaseModel):
     safety_score: float = Field(..., ge=0.0, le=100.0)
     road_connectivity_score: float = Field(..., ge=0.0, le=10.0)
     water_availability_score: float = Field(..., ge=0.0, le=10.0)
-    healthcare_score: float = Field(..., ge=0.0, le=10.0)
+    healthcare_score: float = Field(..., ge=0.0, le=100.0)
     distance_km: float = Field(..., ge=0.0)
     overall_score: float = Field(..., ge=0.0, le=100.0)
     score_breakdown: RelocationSiteBreakdown
@@ -151,4 +166,47 @@ class DashboardPriorityResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class DynamicVillage(Village):
+    """Village enriched with live weather and dynamic risk data."""
+    live_rainfall_mm: Optional[float] = None
+    rainfall_source: Optional[str] = None
+    weather_timestamp: Optional[str] = None
+    dynamic_risk_score: Optional[float] = None
+    dynamic_modifier_applied: bool = False
+    relocation_precomputed: Optional[List[Dict[str, Any]]] = None
 
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+class DynamicVillageListResponse(BaseModel):
+    villages: List[DynamicVillage]
+    last_sync: Optional[str] = None
+    critical_count: int = 0
+    sync_source: str = "dynamic"
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SyncWeatherResponse(BaseModel):
+    status: str  # "success" | "partial" | "fallback"
+    sync_timestamp: str
+    villages_updated: int
+    critical_villages: int
+    red_zone_villages: List[Dict[str, Any]] = []
+    api_sources: Dict[str, str] = {}
+    message: str = "Sync completed"
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SyncStatusResponse(BaseModel):
+    last_sync_timestamp: Optional[str] = None
+    sync_age_minutes: Optional[float] = None
+    is_stale: bool = True
+    critical_village_count: int = 0
+    total_synced_villages: int = 0
+    weather_api_status: str = "fallback"  # "live" | "fallback"
+    api_health: Dict[str, str] = {}
+    status: str = "unknown"
+
+    model_config = ConfigDict(from_attributes=True)

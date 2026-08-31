@@ -108,10 +108,16 @@ export const MapView = ({
             <span style="font-size: 11px; font-weight: 600;">Risk Score:</span>
             <span style="font-size: 12px; font-weight: 800; color: ${color};">${score}/100</span>
           </div>
-          <div style="font-size: 11px; color: #45464d; display: flex; justify-content: space-between;">
+          <div style="font-size: 11px; color: #45464d; display: flex; justify-content: space-between; margin-bottom: 4px;">
             <span>Population:</span>
             <span style="font-weight: 600;">${village.population ? village.population.toLocaleString() : 'N/A'}</span>
           </div>
+          ${(village.live_rainfall_mm !== undefined && village.live_rainfall_mm !== null && village.live_rainfall_mm > 0) ? `
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #0284c7; margin-bottom: 4px;">
+              <span>Live Rainfall:</span>
+              <span style="font-weight: 700;">${Number(village.live_rainfall_mm).toFixed(1)} mm</span>
+            </div>
+          ` : ''}
           ${isFallback ? `
             <div style="margin-top: 6px; padding: 2px 6px; background: #fef08a; border: 1px solid #fde047; border-radius: 4px; color: #854d0e; font-size: 10px; font-weight: 600; text-align: center;">
               ⚠ Cached data

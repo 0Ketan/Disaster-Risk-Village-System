@@ -23,7 +23,7 @@ from ..models.schemas import (
 from ..engines.risk_engine import calculate_risk_score, score_all_villages
 from ..engines.relocation_engine import find_best_sites
 from ..clients.opentopodata import get_elevation_sync
-from ..clients.openweathermap import get_weather_sync
+from ..engines.dynamic_risk_engine import get_dynamic_state
 
 logger = logging.getLogger("villageshield.api")
 
@@ -62,7 +62,7 @@ def load_relocation_sites_raw() -> List[Dict[str, Any]]:
         return []
 
 
-@router.get("/villages", response_model=VillageListResponse)
+@router.get("/villages")
 def get_villages(
     district: Optional[str] = Query(None, description="Filter by district"),
     risk_level: Optional[str] = Query(None, description="Filter by risk level (Critical, High, Moderate, Low)")
@@ -73,9 +73,14 @@ def get_villages(
     """
     raw_villages = load_villages_raw()
     if not raw_villages:
-        return VillageListResponse(villages=[], _source="fallback")
+        return {"villages": [], "_source": "fallback"}
 
     scored = score_all_villages(raw_villages)
+
+    # Use dynamic scores if a recent sync exists
+    dynamic_state = get_dynamic_state()
+    if dynamic_state.get('last_sync_timestamp') and dynamic_state.get('villages'):
+        scored = dynamic_state['villages']
 
     if district:
         scored = [v for v in scored if str(v.get('district', '')).lower() == district.lower()]
@@ -83,8 +88,7 @@ def get_villages(
     if risk_level:
         scored = [v for v in scored if str(v.get('risk_level', '')).lower() == risk_level.lower()]
 
-    villages_models = [Village.model_validate(v) for v in scored]
-    return VillageListResponse(villages=villages_models, _source="live")
+    return {"villages": scored, "_source": "live"}
 
 
 @router.get("/villages/{village_id}", response_model=VillageDetailResponse)
@@ -144,6 +148,11 @@ def get_dashboard_summary():
     raw_villages = load_villages_raw()
     scored = score_all_villages(raw_villages) if raw_villages else []
 
+    # Use dynamic scores if available
+    dynamic_state = get_dynamic_state()
+    if dynamic_state.get('last_sync_timestamp') and dynamic_state.get('villages'):
+        scored = dynamic_state['villages']
+
     total_villages = len(scored)
     critical_count = sum(1 for v in scored if v.get('risk_level') == 'Critical')
     high_count = sum(1 for v in scored if v.get('risk_level') == 'High')
@@ -164,9 +173,10 @@ def get_dashboard_summary():
         low=low_count
     )
 
+    # Fix the weather health check - use dynamic state for weather status
     api_health_status = {
         "opentopodata": "live",
-        "openweathermap": "fallback",
+        "openweathermap": "live" if dynamic_state.get('weather_status') == 'available' else "fallback",
         "meteostat": "live"
     }
 
@@ -206,4 +216,53 @@ def get_dashboard_priorities():
     return DashboardPriorityResponse(priority_list=priorities)
 
 
+# Add missing endpoints as specified in the prompt
 
+@router.get("/villages/{village_id}/hazard-zones")
+def get_village_hazard_zones(village_id: int):
+    """Returns per-hazard zone classification for a village."""
+    raw_villages = load_villages_raw()
+    matching = [v for v in raw_villages if int(v.get('id', 0)) == village_id]
+    if not matching:
+        raise HTTPException(status_code=404, detail=f"Village {village_id} not found")
+    scored = calculate_risk_score(matching[0])
+    return {
+        "village_id": village_id,
+        "village_name": scored['name'],
+        "landslide_zone": scored['landslide_zone'],
+        "flood_zone": scored['flood_zone'],
+        "cloudburst_zone": scored['cloudburst_zone'],
+        "composite_hazard_label": scored['composite_hazard_label'],
+        "vulnerability_index": scored.get('vulnerability_index', 5.0),
+        "_source": "live"
+    }
+
+
+@router.get("/export/district-report")
+def export_district_report(district: Optional[str] = Query(None)):
+    """Returns structured data for printable district report."""
+    raw_villages = load_villages_raw()
+    scored = score_all_villages(raw_villages)
+    if district:
+        scored = [v for v in scored if
+                  str(v.get('district','')).lower() == district.lower()]
+
+    critical = [v for v in scored if v.get('risk_level') == 'Critical']
+    high = [v for v in scored if v.get('risk_level') == 'High']
+
+    return {
+        "district": district or "All Districts",
+        "generated_at": pd.Timestamp.utcnow().isoformat(),
+        "total_villages": len(scored),
+        "summary": {
+            "critical": len(critical),
+            "high": len(high),
+            "moderate": len([v for v in scored if v.get('risk_level') == 'Moderate']),
+            "low": len([v for v in scored if v.get('risk_level') == 'Low']),
+            "population_at_risk": sum(int(v.get('population', 0))
+                                      for v in critical + high)
+        },
+        "immediate_action_villages": critical[:5],
+        "short_term_villages": high[:5],
+        "_source": "live"
+    }

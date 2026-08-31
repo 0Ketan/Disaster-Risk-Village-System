@@ -48,9 +48,11 @@ async def get_weather_async(lat: float, lon: float) -> Tuple[Dict[str, Any], str
     """
     Asynchronously queries OpenWeatherMap with fallback.
     """
-    api_key = os.environ.get("OPENWEATHER_API_KEY", "")
+    # Check for valid API key before attempting live fetch
+    api_key = os.environ.get("OPENWEATHER_API_KEY", "").strip()
     if not api_key or api_key.startswith("your_") or api_key == "mock_key":
-        fallback = mock_weather_generator(lat, lon)
+        # No valid API key - return fallback immediately
+        fallback = mock_weather_generator()
         fallback["_source"] = "fallback"
         return fallback, "fallback"
 
@@ -68,9 +70,11 @@ def get_weather_sync(lat: float, lon: float) -> Tuple[Dict[str, Any], str]:
     """
     Synchronous weather query with fallback.
     """
-    api_key = os.environ.get("OPENWEATHER_API_KEY", "")
+    # Check for valid API key before attempting live fetch
+    api_key = os.environ.get("OPENWEATHER_API_KEY", "").strip()
     if not api_key or api_key.startswith("your_") or api_key == "mock_key":
-        fallback = mock_weather_generator(lat, lon)
+        # No valid API key - return fallback immediately
+        fallback = mock_weather_generator()
         fallback["_source"] = "fallback"
         return fallback, "fallback"
 
@@ -84,12 +88,14 @@ def get_weather_sync(lat: float, lon: float) -> Tuple[Dict[str, Any], str]:
     return data, source
 
 
-def probe_openweathermap() -> APIHealthItem:
+def probe_openweathermap(lat: float = 30.4934, lon: float = 79.0547) -> APIHealthItem:
     """
     Probes OpenWeatherMap availability for startup diagnostics and health endpoint.
     """
-    api_key = os.environ.get("OPENWEATHER_API_KEY", "")
+    # Check for valid API key before attempting live fetch
+    api_key = os.environ.get("OPENWEATHER_API_KEY", "").strip()
     if not api_key or api_key.startswith("your_") or api_key == "mock_key":
+        # No valid API key - return health item with fallback info
         return APIHealthItem(
             service="OpenWeatherMap",
             status="degraded",

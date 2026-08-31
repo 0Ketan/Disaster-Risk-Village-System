@@ -606,3 +606,125 @@ export async function getDashboardSummary() {
     };
   }
 }
+
+/**
+ * Trigger live weather sync and dynamic risk recalculation
+ */
+export async function syncWeather() {
+  try {
+    const response = await apiClient.post('/api/sync-weather');
+    if (response.data && response.data.status) {
+      return response.data;
+    }
+    throw new Error('Invalid sync response');
+  } catch (err) {
+    console.warn('Weather sync failed, using existing data:', err.message);
+    return {
+      status: 'fallback',
+      sync_timestamp: new Date().toISOString(),
+      villages_updated: 0,
+      critical_villages: 0,
+      red_zone_villages: [],
+      api_sources: {},
+      message: 'Sync unavailable - using cached data'
+    };
+  }
+}
+
+/**
+ * Fetch current sync status
+ */
+export async function getSyncStatus() {
+  try {
+    const response = await apiClient.get('/api/sync-status');
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error('Invalid sync status response');
+  } catch (err) {
+    console.warn('Sync status fetch failed:', err.message);
+    return {
+      last_sync_timestamp: null,
+      sync_age_minutes: null,
+      is_stale: true,
+      critical_village_count: 0,
+      api_health: {},
+      status: 'unknown'
+    };
+  }
+}
+
+/**
+ * Fetch villages with dynamic risk scores
+ */
+export async function getDynamicVillages() {
+  try {
+    const response = await apiClient.get('/api/villages/dynamic');
+    if (response.data && Array.isArray(response.data.villages)) {
+      return {
+        villages: response.data.villages,
+        last_sync: response.data.last_sync,
+        critical_count: response.data.critical_count || 0,
+        _source: 'dynamic'
+      };
+    }
+    throw new Error('Invalid dynamic villages response');
+  } catch (err) {
+    console.warn('Dynamic villages fetch failed, using static:', err.message);
+    return getVillages();
+  }
+}
+
+/**
+ * Trigger on-demand live weather refresh and dynamic risk recalculation.
+ * Calls POST /api/refresh (with GET fallback), returning updated dynamic villages.
+ * On error/failure, gracefully falls back and includes standard status message.
+ */
+export async function refreshVillages() {
+  try {
+    let response;
+    try {
+      response = await apiClient.post('/api/refresh');
+    } catch (postErr) {
+      if (postErr.response && (postErr.response.status === 405 || postErr.response.status === 404)) {
+        response = await apiClient.get('/api/refresh');
+      } else {
+        throw postErr;
+      }
+    }
+
+    if (response && response.data) {
+      const data = response.data;
+      const villagesList = Array.isArray(data.villages) ? data.villages : (Array.isArray(data) ? data : []);
+      const isFallback = data._source === 'fallback' || data._source === 'fallback_cache' || data.sync_source === 'fallback' || data.status === 'partial_failure' || data.weather_status === 'unavailable';
+      
+      return {
+        status: isFallback ? 'fallback' : 'success',
+        data: data,
+        villages: villagesList.length > 0 ? villagesList : FALLBACK_VILLAGES,
+        total_villages: data.total_villages || villagesList.length || FALLBACK_VILLAGES.length,
+        critical_count: data.critical_count !== undefined 
+          ? data.critical_count 
+          : villagesList.filter(v => v.risk_level === 'Critical' || v.risk_score >= 81).length,
+        last_updated: data.last_updated || data.last_sync || new Date().toISOString(),
+        _source: data._source || (isFallback ? 'fallback_cache' : 'live_refresh'),
+        message: isFallback ? (data.warning || 'Weather API unavailable. Showing cached data.') : 'Live dynamic risk recalculation complete.'
+      };
+    }
+    throw new Error('Invalid response payload from /api/refresh');
+  } catch (err) {
+    console.warn('Live refresh failed, using cached fallback data:', err.message);
+    return {
+      status: 'fallback',
+      data: null,
+      error: err.message,
+      message: 'Weather API unavailable. Showing cached data.',
+      villages: FALLBACK_VILLAGES,
+      total_villages: FALLBACK_VILLAGES.length,
+      critical_count: FALLBACK_VILLAGES.filter(v => v.risk_level === 'Critical' || v.risk_score >= 81).length,
+      last_updated: new Date().toISOString(),
+      _source: 'fallback'
+    };
+  }
+}
+
