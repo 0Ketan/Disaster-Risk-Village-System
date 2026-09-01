@@ -12,16 +12,28 @@ import { getRelocationSites } from '../../api/villages';
  * Opens upon village selection on the map or sidebar.
  * Automatically fetches relocation site recommendations when risk_score >= 70.
  */
-export const DetailDrawer = ({ 
-  village, 
-  onClose 
+export const DetailDrawer = ({
+  village,
+  onClose,
+  onDispatchOrder
 }) => {
   const [relocationData, setRelocationData] = useState(null);
   const [isLoadingRelocation, setIsLoadingRelocation] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const handleDispatch = (site) => {
+    const villageName = village?.name || 'Village';
+    const pop = village?.population || 0;
+    const message = `Evacuation Order Dispatched to District Magistrate: Relocate ${pop.toLocaleString()} citizens from ${villageName} to ${site.name}.`;
+    setToastMessage(message);
+    // Auto hide after 4 seconds
+    setTimeout(() => setToastMessage(null), 4000);
+    // optional callback to parent
+    if (onDispatchOrder) onDispatchOrder(village, site);
+  };
 
   const riskScore = Number(village?.risk_score) || 0;
   const needsRelocation = riskScore >= 70;
-  const isFallback = village?._source === 'fallback';
+  const isFallback = village?._source === 'fallback' || !village?._source;
 
   // Load relocation recommendations when village risk >= 70
   useEffect(() => {
@@ -163,10 +175,12 @@ export const DetailDrawer = ({
             ) : relocationData && relocationData.sites && relocationData.sites.length > 0 ? (
               <div className="space-y-3" data-testid="relocation-list">
                 {relocationData.sites.map((site, index) => (
-                  <RelocationCard 
-                    key={site.id || index} 
-                    site={site} 
-                    rank={index} 
+                  <RelocationCard
+                    key={site.id || index}
+                    site={site}
+                    rank={index}
+                    villageName={village.name}
+                    onDispatch={() => handleDispatch(site)}
                   />
                 ))}
               </div>

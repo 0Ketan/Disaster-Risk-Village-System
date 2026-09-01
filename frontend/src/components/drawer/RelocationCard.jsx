@@ -30,12 +30,6 @@ export const RelocationCard = ({ site, rank = 0 }) => {
             <h4 className="font-bold text-sm text-on-surface">
               {site.name}
             </h4>
-            {isRecommended && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold shadow-xs">
-                <Star className="w-3 h-3 fill-current" />
-                <span>★ Recommended</span>
-              </span>
-            )}
           </div>
           <div className="text-[11px] text-on-surface-variant flex items-center gap-1 mt-0.5">
             <MapPin className="w-3 h-3 text-on-surface-variant/70" />
