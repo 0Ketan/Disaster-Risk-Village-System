@@ -23,7 +23,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 87.5,
     risk_level: "Critical",
     priority: "Immediate",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 2,
@@ -46,7 +47,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 95.0,
     risk_level: "Critical",
     priority: "Immediate",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 3,
@@ -69,7 +71,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 91.0,
     risk_level: "Critical",
     priority: "Immediate",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 4,
@@ -92,7 +95,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 72.0,
     risk_level: "High",
     priority: "Short-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 5,
@@ -115,7 +119,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 88.0,
     risk_level: "Critical",
     priority: "Immediate",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 6,
@@ -138,7 +143,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 35.0,
     risk_level: "Moderate",
     priority: "Medium-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 7,
@@ -161,7 +167,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 28.0,
     risk_level: "Low",
     priority: "Monitor",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 8,
@@ -184,7 +191,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 22.0,
     risk_level: "Low",
     priority: "Monitor",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 9,
@@ -207,7 +215,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 38.0,
     risk_level: "Moderate",
     priority: "Medium-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 10,
@@ -230,7 +239,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 65.0,
     risk_level: "High",
     priority: "Short-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 11,
@@ -253,7 +263,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 48.0,
     risk_level: "Moderate",
     priority: "Medium-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 12,
@@ -276,7 +287,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 78.0,
     risk_level: "High",
     priority: "Short-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 13,
@@ -299,7 +311,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 71.0,
     risk_level: "High",
     priority: "Short-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 14,
@@ -322,7 +335,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 89.0,
     risk_level: "Critical",
     priority: "Immediate",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 15,
@@ -345,7 +359,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 55.0,
     risk_level: "Moderate",
     priority: "Medium-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 16,
@@ -368,7 +383,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 74.0,
     risk_level: "High",
     priority: "Short-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 17,
@@ -391,7 +407,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 50.0,
     risk_level: "Moderate",
     priority: "Medium-term",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 18,
@@ -414,7 +431,8 @@ export const FALLBACK_VILLAGES = [
     risk_score: 18.0,
     risk_level: "Low",
     priority: "Monitor",
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   }
 ];
 
@@ -436,7 +454,8 @@ export const FALLBACK_RELOCATION_SITES = [
       healthcare: 82,
       distance: 85
     },
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 2,
@@ -455,7 +474,8 @@ export const FALLBACK_RELOCATION_SITES = [
       healthcare: 88,
       distance: 75
     },
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   },
   {
     id: 3,
@@ -474,7 +494,8 @@ export const FALLBACK_RELOCATION_SITES = [
       healthcare: 78,
       distance: 65
     },
-    _source: "fallback"
+    _source: "fallback",
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
   }
 ];
 

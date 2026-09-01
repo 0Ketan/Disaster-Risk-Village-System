@@ -38,7 +38,9 @@ class Village(BaseModel):
     landslide_zone: str = Field(default="Green")  # "Red" | "Orange" | "Green"
     flood_zone: str = Field(default="Green")      # "Red" | "Orange" | "Green"
     cloudburst_zone: str = Field(default="Green") # "Red" | "Orange" | "Green"
+    coastal_erosion_zone: str = Field(default="Green") # "Red" | "Orange" | "Green"
     composite_hazard_label: str = Field(default="Low Multi-Hazard Exposure")
+    hazard_zones: Optional[Dict[str, str]] = None
     # Dynamic weather fields
     live_rainfall_mm: Optional[float] = None
     rainfall_source: Optional[str] = None

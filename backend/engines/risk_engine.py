@@ -138,6 +138,40 @@ def calculate_risk_score(
         'road_score': round(road_score, 1)
     }
 
+    # --- Multi-Hazard Red Zone Logic ---
+    landslide_subscore = (slope_score * 0.45 + landslide_score * 0.35 + rainfall_score * 0.20) * 10.0
+    flood_subscore = (flood_score * 0.55 + rainfall_score * 0.45) * 10.0
+    
+    cloudburst_base = (rainfall_score * 0.70 + slope_score * 0.15 + road_score * 0.15) * 10.0
+    cloudburst_subscore = min(cloudburst_base + (10.0 if rain_raw >= 2800 else 0.0), 100.0)
+
+    coastal_erosion_subscore = min((flood_score * 0.60 + rainfall_score * 0.40) * 10.0, 100.0)
+
+    def get_zone(score):
+        if score >= 75.0: return "Red"
+        if score >= 50.0: return "Orange"
+        return "Green"
+
+    landslide_zone = get_zone(landslide_subscore)
+    flood_zone = get_zone(flood_subscore)
+    cloudburst_zone = get_zone(cloudburst_subscore)
+    coastal_erosion_zone = get_zone(coastal_erosion_subscore)
+
+    hazard_zones = {
+        'landslide': landslide_zone,
+        'flood': flood_zone,
+        'cloudburst': cloudburst_zone,
+        'coastal_erosion': coastal_erosion_zone
+    }
+    
+    red_count = list(hazard_zones.values()).count("Red")
+    if red_count >= 2:
+        composite_hazard_label = "Multi-Hazard Critical"
+    elif red_count == 1:
+        composite_hazard_label = "Single-Hazard Critical"
+    else:
+        composite_hazard_label = "Low Multi-Hazard Exposure"
+
     scored.update({
         'risk_score': risk_score,
         'base_risk_score': base_risk_score,
@@ -148,6 +182,16 @@ def calculate_risk_score(
         'priority': priority,
         'relocation_required': relocation_required,
         'score_breakdown': score_breakdown,
+        'landslide_subscore': round(landslide_subscore, 1),
+        'flood_subscore': round(flood_subscore, 1),
+        'cloudburst_subscore': round(cloudburst_subscore, 1),
+        'coastal_erosion_subscore': round(coastal_erosion_subscore, 1),
+        'landslide_zone': landslide_zone,
+        'flood_zone': flood_zone,
+        'cloudburst_zone': cloudburst_zone,
+        'coastal_erosion_zone': coastal_erosion_zone,
+        'composite_hazard_label': composite_hazard_label,
+        'hazard_zones': hazard_zones,
         # Flat legacy keys for backward compatibility
         'slope_score': round(slope_score, 1),
         'rainfall_score': round(rainfall_score, 1),

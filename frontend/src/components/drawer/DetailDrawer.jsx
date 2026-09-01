@@ -3,6 +3,7 @@ import { X, MapPin, Users, AlertOctagon, ShieldCheck, ShieldAlert, Sparkles, Nav
 import RiskGauge from './RiskGauge';
 import FactorBreakdown from './FactorBreakdown';
 import RelocationCard from './RelocationCard';
+import HazardZoneBadges from './HazardZoneBadges';
 import WarningBadge from '../common/WarningBadge';
 import { getRelocationSites } from '../../api/villages';
 
@@ -94,6 +95,11 @@ export const DetailDrawer = ({
         {/* Risk Gauge Section */}
         <section>
           <RiskGauge score={riskScore} />
+        </section>
+
+        {/* Hazard Zone Classification */}
+        <section>
+          <HazardZoneBadges village={village} />
         </section>
 
         {/* Priority & Quick Stats Grid */}

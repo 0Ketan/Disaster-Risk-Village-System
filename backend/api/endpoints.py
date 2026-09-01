@@ -232,6 +232,8 @@ def get_village_hazard_zones(village_id: int):
         "landslide_zone": scored['landslide_zone'],
         "flood_zone": scored['flood_zone'],
         "cloudburst_zone": scored['cloudburst_zone'],
+        "coastal_erosion_zone": scored['coastal_erosion_zone'],
+        "hazard_zones": scored['hazard_zones'],
         "composite_hazard_label": scored['composite_hazard_label'],
         "vulnerability_index": scored.get('vulnerability_index', 5.0),
         "_source": "live"

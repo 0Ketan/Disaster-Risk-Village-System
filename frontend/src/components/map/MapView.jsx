@@ -27,6 +27,25 @@ export const MapView = ({
   const markersLayerRef = useRef(null);
   const selectedHaloRef = useRef(null);
 
+  const [filterLandslide, setFilterLandslide] = React.useState(false);
+  const [filterFlood, setFilterFlood] = React.useState(false);
+  const [filterCloudburst, setFilterCloudburst] = React.useState(false);
+  const [filterCoastal, setFilterCoastal] = React.useState(false);
+
+  const filteredVillages = React.useMemo(() => {
+    if (!filterLandslide && !filterFlood && !filterCloudburst && !filterCoastal) {
+      return villages;
+    }
+    return villages.filter(v => {
+      const hz = v.hazard_zones || {};
+      if (filterLandslide && hz.landslide === 'Red') return true;
+      if (filterFlood && hz.flood === 'Red') return true;
+      if (filterCloudburst && hz.cloudburst === 'Red') return true;
+      if (filterCoastal && hz.coastal_erosion === 'Red') return true;
+      return false;
+    });
+  }, [villages, filterLandslide, filterFlood, filterCloudburst, filterCoastal]);
+
   // Initialize Leaflet Map Instance
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -73,7 +92,7 @@ export const MapView = ({
       selectedHaloRef.current = null;
     }
 
-    villages.forEach((village) => {
+    filteredVillages.forEach((village) => {
       const lat = Number(village.latitude);
       const lng = Number(village.longitude);
       if (isNaN(lat) || isNaN(lng)) return;
@@ -111,6 +130,12 @@ export const MapView = ({
           <div style="font-size: 11px; color: #45464d; display: flex; justify-content: space-between; margin-bottom: 4px;">
             <span>Population:</span>
             <span style="font-weight: 600;">${village.population ? village.population.toLocaleString() : 'N/A'}</span>
+          </div>
+          <div style="font-size: 10px; color: #45464d; background: #f2f4f7; padding: 4px; border-radius: 4px; margin-bottom: 4px; text-align: center; white-space: nowrap;">
+            Landslide: ${village.hazard_zones?.landslide === 'Red' ? '🔴' : village.hazard_zones?.landslide === 'Orange' ? '🟠' : village.hazard_zones?.landslide === 'Green' ? '🟢' : '⚪'} | 
+            Flood: ${village.hazard_zones?.flood === 'Red' ? '🔴' : village.hazard_zones?.flood === 'Orange' ? '🟠' : village.hazard_zones?.flood === 'Green' ? '🟢' : '⚪'} | 
+            Cloudburst: ${village.hazard_zones?.cloudburst === 'Red' ? '🔴' : village.hazard_zones?.cloudburst === 'Orange' ? '🟠' : village.hazard_zones?.cloudburst === 'Green' ? '🟢' : '⚪'} | 
+            Coastal Erosion: ${village.hazard_zones?.coastal_erosion === 'Red' ? '🔴' : village.hazard_zones?.coastal_erosion === 'Orange' ? '🟠' : village.hazard_zones?.coastal_erosion === 'Green' ? '🟢' : '⚪'}
           </div>
           ${(village.live_rainfall_mm !== undefined && village.live_rainfall_mm !== null && village.live_rainfall_mm > 0) ? `
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #0284c7; margin-bottom: 4px;">
@@ -155,7 +180,7 @@ export const MapView = ({
         selectedHaloRef.current = halo;
       }
     });
-  }, [villages, selectedVillageId, onVillageSelect]);
+  }, [filteredVillages, selectedVillageId, onVillageSelect]);
 
   // Handle map container resizing (fixes the black bar when sidebar slides)
   useEffect(() => {
@@ -191,6 +216,25 @@ export const MapView = ({
   return (
     <div className="w-full h-full relative overflow-hidden bg-map-bg">
       <div ref={mapContainerRef} className="w-full h-full z-10" />
+      <div className="absolute top-4 right-4 z-[400] bg-white/95 backdrop-blur-sm border border-outline-variant/80 rounded-xl shadow-lg p-3 max-w-xs flex flex-col gap-2">
+        <div className="text-[11px] font-bold text-on-surface uppercase tracking-wider mb-1">Filter Red Zones</div>
+        <label className="flex items-center gap-2 text-xs font-medium text-on-surface cursor-pointer">
+          <input type="checkbox" checked={filterLandslide} onChange={e => setFilterLandslide(e.target.checked)} className="rounded text-red-500 focus:ring-red-500 cursor-pointer" />
+          🌋 Landslide
+        </label>
+        <label className="flex items-center gap-2 text-xs font-medium text-on-surface cursor-pointer">
+          <input type="checkbox" checked={filterFlood} onChange={e => setFilterFlood(e.target.checked)} className="rounded text-red-500 focus:ring-red-500 cursor-pointer" />
+          🌊 Flood
+        </label>
+        <label className="flex items-center gap-2 text-xs font-medium text-on-surface cursor-pointer">
+          <input type="checkbox" checked={filterCloudburst} onChange={e => setFilterCloudburst(e.target.checked)} className="rounded text-red-500 focus:ring-red-500 cursor-pointer" />
+          ⛈️ Cloudburst
+        </label>
+        <label className="flex items-center gap-2 text-xs font-medium text-on-surface cursor-pointer">
+          <input type="checkbox" checked={filterCoastal} onChange={e => setFilterCoastal(e.target.checked)} className="rounded text-red-500 focus:ring-red-500 cursor-pointer" />
+          🏖️ Coastal Erosion
+        </label>
+      </div>
       <MapLegend />
     </div>
   );
