@@ -310,30 +310,10 @@ def fetch_live_weather(villages: List[Dict[str, Any]]) -> Dict[int, float]:
 
 def fetch_openweathermap_weather_with_metadata(villages: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
-    OpenWeatherMap wrapper for fetch_live_weather_with_metadata.
-    Returns same structure but marks source as "OpenWeatherMap" when available.
+    OpenWeatherMap compatibility wrapper for fetch_live_weather_with_metadata.
+    Delegates to the Open-Meteo implementation and returns the same structure.
     """
     return fetch_live_weather_with_metadata(villages)
-    """
-    Fetches live precipitation for a collection of village records.
-    Backward-compatible wrapper returning Dict[int, float] mapping village ID to live precipitation in mm.
-
-    Adheres strictly to R1:
-    - Queries Open-Meteo API for current.precipitation.
-    - 3.0-second timeout per call/batch.
-    - Robust try/except handling to catch all network/HTTP/JSON exceptions.
-    - Fallback logic: returns 0.0 or annual_rainfall_mm fallback on failure without crashing.
-    - Returns a dict mapping village_id -> live_precipitation_mm.
-
-    Args:
-        villages: List of village dictionaries containing 'id', 'latitude', 'longitude',
-                  and optionally 'annual_rainfall_mm'.
-
-    Returns:
-        Dict[int, float]: Mapping of village ID to live precipitation in mm.
-    """
-    result = fetch_live_weather_with_metadata(villages)
-    return result.get("weather_map", {})
 
 
 def fetch_weather_batch(villages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

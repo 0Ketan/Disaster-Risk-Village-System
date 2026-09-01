@@ -49,9 +49,10 @@ def get_cached_elevation(lat, lon):
         logger.error(f"Failed to fetch elevation from OpenTopoData: {e}")
         try:
             from backend.clients.opentopodata import mock_elevation_generator
-            elevation = mock_elevation_generator(lat, lon)
+            mock_data = mock_elevation_generator(lat, lon)
+            elevation = float(mock_data["results"][0]["elevation"])
             return elevation, "mock_elevation_generator"
-        except ImportError:
+        except (ImportError, KeyError, IndexError, TypeError, ValueError):
             pass
             
     return 0.0, "fallback"

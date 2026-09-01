@@ -19,6 +19,10 @@ logger = logging.getLogger("villageshield.dynamic_risk_engine")
 
 LAST_UPDATED_TIME = None
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+VILLAGES_CSV_PATH = os.path.join(BASE_DIR, "data", "villages.csv")
+SITES_CSV_PATH = os.path.join(BASE_DIR, "data", "relocation_sites.csv")
+
 _dynamic_state = {
     'last_sync_timestamp': None,
     'villages': [],
@@ -33,6 +37,52 @@ def get_dynamic_state():
 def get_last_updated_time():
     global LAST_UPDATED_TIME
     return LAST_UPDATED_TIME
+
+
+def _load_csv_records(path, label):
+    """Reads a CSV into a list of row dicts; returns [] with logging on any failure."""
+    if not os.path.exists(path):
+        logger.error(f"{label} CSV not found at {path}")
+        return []
+    try:
+        return pd.read_csv(path).to_dict('records')
+    except Exception as exc:
+        logger.error(f"Error reading {label} CSV at {path}: {exc}")
+        return []
+
+
+def load_baseline_from_csv():
+    """
+    Startup baseline loader: reads the canonical data/villages.csv (no network calls),
+    scores every village statically, and seeds the in-memory dynamic state so
+    /api/villages, /api/dashboard/summary and /api/villages/dynamic serve the
+    exact CSV baseline before the first live weather refresh.
+    """
+    global _dynamic_state, LAST_UPDATED_TIME
+
+    villages = _load_csv_records(VILLAGES_CSV_PATH, "Villages")
+    scored = score_all_villages(villages)
+    for v in scored:
+        v['rainfall_source'] = 'baseline_csv'
+        v['_source'] = 'baseline'
+
+    critical_count = sum(1 for v in scored if v.get('risk_level') == 'Critical')
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    _dynamic_state['villages'] = scored
+    _dynamic_state['critical_count'] = critical_count
+    _dynamic_state['last_sync_timestamp'] = now_iso
+    LAST_UPDATED_TIME = now_iso
+
+    logger.info(
+        f"Startup baseline loaded from {VILLAGES_CSV_PATH}: "
+        f"{len(scored)} villages, {critical_count} critical (static CSV scoring, no network calls)."
+    )
+    return {
+        "villages_loaded": len(scored),
+        "critical_count": critical_count,
+        "csv_path": VILLAGES_CSV_PATH,
+    }
 
 def recalculate_dynamic_risk(village, live_rainfall_mm, elevation_m=None):
     """
@@ -93,21 +143,9 @@ def recalculate_all_villages_dynamic():
     _dynamic_state['sync_in_progress'] = True
     
     try:
-        # Load villages from CSV
-        BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-        villages_path = os.path.join(BASE_DIR, "data", "villages.csv")
-        sites_path = os.path.join(BASE_DIR, "data", "relocation_sites.csv")
-        
-        villages = []
-        if os.path.exists(villages_path):
-            df = pd.read_csv(villages_path)
-            villages = df.to_dict('records')
-            
-        relocation_sites = []
-        if os.path.exists(sites_path):
-            df_sites = pd.read_csv(sites_path)
-            relocation_sites = df_sites.to_dict('records')
-            
+        villages = _load_csv_records(VILLAGES_CSV_PATH, "Villages")
+        relocation_sites = _load_csv_records(SITES_CSV_PATH, "Relocation sites")
+
         critical_count = 0
         updated_villages = []
         
@@ -163,25 +201,8 @@ def refresh_dynamic_state():
     now_iso = datetime.now(timezone.utc).isoformat()
 
     try:
-        BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-        villages_path = os.path.join(BASE_DIR, "data", "villages.csv")
-        sites_path = os.path.join(BASE_DIR, "data", "relocation_sites.csv")
-
-        villages = []
-        if os.path.exists(villages_path):
-            try:
-                df = pd.read_csv(villages_path)
-                villages = df.to_dict('records')
-            except Exception as read_err:
-                logger.error(f"Error reading villages CSV: {read_err}")
-
-        relocation_sites = []
-        if os.path.exists(sites_path):
-            try:
-                df_sites = pd.read_csv(sites_path)
-                relocation_sites = df_sites.to_dict('records')
-            except Exception as sites_err:
-                logger.error(f"Error reading relocation sites CSV: {sites_err}")
+        villages = _load_csv_records(VILLAGES_CSV_PATH, "Villages")
+        relocation_sites = _load_csv_records(SITES_CSV_PATH, "Relocation sites")
 
         if not villages:
             LAST_UPDATED_TIME = now_iso

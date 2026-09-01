@@ -6,6 +6,7 @@ Configured with CORS middleware, centralized routers, and resilient error handle
 import os
 import sys
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -24,18 +25,30 @@ from backend.engines.dynamic_risk_engine import (
     recalculate_all_villages_dynamic,
     refresh_dynamic_state,
     get_last_updated_time,
+    load_baseline_from_csv,
     LAST_UPDATED_TIME,
 )
 
 logger = logging.getLogger("villageshield")
 logging.basicConfig(level=logging.INFO)
 
+
+@asynccontextmanager
+async def lifespan(app):
+    summary = load_baseline_from_csv()
+    logger.info(
+        f"Startup complete: {summary['villages_loaded']} villages seeded from {summary['csv_path']}"
+    )
+    yield
+
+
 app = FastAPI(
     title="Disaster Risk Village System (VillageShield)",
     version="1.0.0",
     description="AI-powered disaster risk assessment and safe relocation platform for Himalayan rural settlements.",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # Configure CORS middleware

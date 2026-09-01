@@ -152,10 +152,29 @@ def calculate_risk_score(
         if score >= 50.0: return "Orange"
         return "Green"
 
+    # Static zones (baseline from CSV factors only, before live weather escalation)
+    static_landslide_zone = get_zone(landslide_subscore)
+    static_flood_zone = get_zone(flood_subscore)
+    static_cloudburst_zone = get_zone(cloudburst_subscore)
+
+    # Rainfall-driven hazards escalate with live precipitation (same 2.0 pts/mm
+    # scale as the composite dynamic modifier, capped at +30 to stay bounded).
+    live_zone_boost = round(min(live_precipitation_mm * 2.0, 30.0), 1) if live_precipitation_mm else 0.0
+    if live_zone_boost > 0.0:
+        landslide_subscore = min(landslide_subscore + live_zone_boost, 100.0)
+        flood_subscore = min(flood_subscore + live_zone_boost, 100.0)
+        cloudburst_subscore = min(cloudburst_subscore + live_zone_boost, 100.0)
+
     landslide_zone = get_zone(landslide_subscore)
     flood_zone = get_zone(flood_subscore)
     cloudburst_zone = get_zone(cloudburst_subscore)
     coastal_erosion_zone = get_zone(coastal_erosion_subscore)
+
+    zones_shifted_by_live_weather = (
+        landslide_zone != static_landslide_zone
+        or flood_zone != static_flood_zone
+        or cloudburst_zone != static_cloudburst_zone
+    )
 
     hazard_zones = {
         'landslide': landslide_zone,
@@ -186,6 +205,8 @@ def calculate_risk_score(
         'flood_subscore': round(flood_subscore, 1),
         'cloudburst_subscore': round(cloudburst_subscore, 1),
         'coastal_erosion_subscore': round(coastal_erosion_subscore, 1),
+        'live_zone_boost': live_zone_boost,
+        'zones_shifted_by_live_weather': zones_shifted_by_live_weather,
         'landslide_zone': landslide_zone,
         'flood_zone': flood_zone,
         'cloudburst_zone': cloudburst_zone,
