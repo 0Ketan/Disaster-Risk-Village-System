@@ -27,6 +27,14 @@ export const FALLBACK_HEALTH_DATA = {
       mode: 'live',
       latency_ms: 240,
       message: 'Historical baseline ready'
+    },
+    {
+      service: 'Open-Meteo',
+      name: 'Open-Meteo (Flood & Weather)',
+      status: 'healthy',
+      mode: 'live',
+      latency_ms: 120,
+      message: 'Flood API reachable'
     }
   ],
   _source: 'fallback'
@@ -73,8 +81,35 @@ export async function getApiHealthStatus() {
           };
         });
       } else {
-        // Fallback to default 3 services if services key is missing
+        // Fallback to default services if services key is missing
         normalizedServices = FALLBACK_HEALTH_DATA.services;
+      }
+
+      // Ping Open-Meteo from frontend to get real latency immediately
+      if (!normalizedServices.some(s => s.service === 'Open-Meteo')) {
+        let openMeteoLatency = 0;
+        let openMeteoStatus = 'degraded';
+        let openMeteoMode = 'fallback';
+        
+        try {
+          const start = performance.now();
+          // Lightweight ping to base domain API
+          await fetch('https://flood-api.open-meteo.com/v1/flood?latitude=20.0&longitude=85.0&daily=river_discharge', { method: 'GET', cache: 'no-store' });
+          openMeteoLatency = Math.round(performance.now() - start);
+          openMeteoStatus = 'healthy';
+          openMeteoMode = 'live';
+        } catch (e) {
+          console.warn('Open-Meteo ping failed:', e);
+        }
+        
+        normalizedServices.push({
+          service: 'Open-Meteo',
+          name: 'Open-Meteo (Flood & Weather)',
+          status: openMeteoStatus,
+          mode: openMeteoMode,
+          latency_ms: openMeteoLatency,
+          message: openMeteoMode === 'live' ? 'Flood API reachable' : 'Ping failed'
+        });
       }
 
       return {
