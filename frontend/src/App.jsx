@@ -109,7 +109,7 @@ export const App = () => {
       return;
     }
 
-    const localFound = villages.find((v) => Number(v.id) === Number(selectedVillageId));
+    const localFound = villages.find((v) => String(v.id) === String(selectedVillageId));
     if (localFound) {
       setSelectedVillage(localFound);
     }
@@ -118,7 +118,9 @@ export const App = () => {
     getVillageById(selectedVillageId)
       .then((res) => {
         if (isMounted && res && res.village) {
-          setSelectedVillage((prev) => ({ ...prev, ...res.village }));
+          if (String(res.village.id) === String(selectedVillageId)) {
+            setSelectedVillage((prev) => ({ ...prev, ...res.village }));
+          }
         }
       })
       .catch((err) => {

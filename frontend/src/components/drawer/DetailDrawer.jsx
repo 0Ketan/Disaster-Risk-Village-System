@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, MapPin, Users, AlertOctagon, ShieldCheck, ShieldAlert, Sparkles, Navigation } from 'lucide-react';
 import RiskGauge from './RiskGauge';
 import FactorBreakdown from './FactorBreakdown';
+import FloodFactorBreakdown from './FloodFactorBreakdown';
 import RelocationCard from './RelocationCard';
 import HazardZoneBadges from './HazardZoneBadges';
 import WarningBadge from '../common/WarningBadge';
@@ -17,6 +18,7 @@ export const DetailDrawer = ({
   onClose,
   onDispatchOrder
 }) => {
+  console.log("Sidebar rendering village:", village?.name);
   const [relocationData, setRelocationData] = useState(null);
   const [isLoadingRelocation, setIsLoadingRelocation] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -141,9 +143,12 @@ export const DetailDrawer = ({
           </div>
         </section>
 
-        {/* 5-Factor Hazard Breakdown Bars */}
+        {/* 5-Factor Hazard Breakdown OR Flood Risk Monitor */}
         <section>
-          <FactorBreakdown village={village} />
+          {(village.hazard_type === 'flood' || ['OD_KEN_001', 'OD_JAG_001', 'OD_PUR_001'].includes(String(village.id)))
+            ? <FloodFactorBreakdown village={village} />
+            : <FactorBreakdown village={village} />
+          }
         </section>
 
         {/* Relocation Site Recommendations (Risk >= 70) */}

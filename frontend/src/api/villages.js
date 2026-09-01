@@ -536,7 +536,7 @@ export async function getVillageById(id) {
     throw new Error(`Village ${id} not found in live API`);
   } catch (err) {
     console.warn(`Using fallback for village ID ${id}:`, err.message);
-    const found = FALLBACK_VILLAGES.find(v => Number(v.id) === Number(id)) || FALLBACK_VILLAGES[0];
+    const found = FALLBACK_VILLAGES.find(v => String(v.id) === String(id)) || FALLBACK_VILLAGES[0];
     return {
       village: found,
       _source: 'fallback'
