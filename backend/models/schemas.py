@@ -42,7 +42,9 @@ class Village(BaseModel):
     composite_hazard_label: str = Field(default="Low Multi-Hazard Exposure")
     hazard_zones: Optional[Dict[str, str]] = None
     # Dynamic weather fields
+    live_precipitation_mm: Optional[float] = None
     live_rainfall_mm: Optional[float] = None
+    live_sst_c: Optional[float] = None
     rainfall_source: Optional[str] = None
     weather_timestamp: Optional[str] = None
     dynamic_risk_score: Optional[float] = None
@@ -171,6 +173,8 @@ class DashboardPriorityResponse(BaseModel):
 class DynamicVillage(Village):
     """Village enriched with live weather and dynamic risk data."""
     live_rainfall_mm: Optional[float] = None
+    live_precipitation_mm: Optional[float] = None
+    live_sst_c: Optional[float] = None
     rainfall_source: Optional[str] = None
     weather_timestamp: Optional[str] = None
     dynamic_risk_score: Optional[float] = None

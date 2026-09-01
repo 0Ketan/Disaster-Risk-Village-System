@@ -27,13 +27,21 @@ export const FALLBACK_HEALTH_DATA = {
       mode: 'live',
       latency_ms: 240,
       message: 'Historical baseline ready'
+    },
+    {
+      service: 'OceanSat',
+      name: 'OceanSat-2 (NOAA ERDDAP)',
+      status: 'healthy',
+      mode: 'live',
+      latency_ms: 310,
+      message: 'Oceanographic data connected'
     }
   ],
   _source: 'fallback'
 };
 
 /**
- * Fetch health probe status for all 3 external APIs
+ * Fetch health probe status for all external APIs
  */
 export async function getApiHealthStatus() {
   try {
@@ -61,7 +69,8 @@ export async function getApiHealthStatus() {
           const nameMap = {
             opentopodata: 'OpenTopoData (Elevation)',
             openweathermap: 'OpenWeatherMap (Precipitation)',
-            meteostat: 'Meteostat (Climate History)'
+            meteostat: 'Meteostat (Climate History)',
+            oceansat: 'OceanSat-2 (NOAA ERDDAP)'
           };
           return {
             service: key,

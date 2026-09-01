@@ -33,23 +33,27 @@ def _clean_metric(val: Any, default: float = 0.0) -> float:
 
 def calculate_risk_score(
     village: Dict[str, Any],
-    live_precipitation: Optional[float] = None
+    live_precipitation: Optional[float] = None,
+    live_sst: Optional[float] = None
 ) -> Dict[str, Any]:
     """
-    Calculates normalized base risk score and dynamic risk score (if live precipitation provided)
+    Calculates normalized base risk score and dynamic risk score (if live precipitation/sst provided)
     along with priority classification and relocation triggers for a village.
 
     Args:
         village: Dictionary containing village metrics.
         live_precipitation: Optional real-time precipitation reading in mm. If provided,
             applies dynamic risk modifier: dynamic_risk = base_risk + (live_precipitation * 2.0) capped at 100.
+        live_sst: Optional real-time sea surface temperature from OceanSat-2. If provided,
+            elevated SST (>28C) adds to the dynamic risk score to simulate cyclone vulnerability.
 
     Returns:
         Enhanced dictionary containing:
-        - risk_score: Active composite risk score (dynamic_risk if live precip provided, else base)
+        - risk_score: Active composite risk score (dynamic_risk if live precip/sst provided, else base)
         - base_risk_score: Static baseline score from historical CSV metrics
-        - dynamic_risk_score: Dynamic score if live precip provided, else None
+        - dynamic_risk_score: Dynamic score if live precip/sst provided, else None
         - live_precipitation_mm: Applied precipitation in mm if provided, else None
+        - live_sst_c: Applied SST in Celsius if provided, else None
         - dynamic_modifier_applied: Boolean indicating if dynamic adjustment was made
         - risk_level: "Critical" | "High" | "Moderate" | "Low"
         - priority: "Immediate" | "Short-term" | "Medium-term" | "Monitor"
@@ -93,6 +97,11 @@ def calculate_risk_score(
     base_risk_score = round(min(max(weighted_sum * 10.0, 0.0), 100.0), 1)
 
     # Dynamic Modifier Calculation
+    dynamic_modifier_applied = False
+    dynamic_risk = base_risk_score
+    live_precipitation_mm = None
+    live_sst_c = None
+
     if live_precipitation is not None:
         try:
             live_precip = float(live_precipitation)
@@ -102,16 +111,31 @@ def calculate_risk_score(
             live_precip = 0.0
 
         live_precip = max(0.0, live_precip)
-        dynamic_risk = round(min(max(base_risk_score + (live_precip * 2.0), 0.0), 100.0), 1)
+        dynamic_risk += (live_precip * 2.0)
+        live_precipitation_mm = round(live_precip, 2)
+        if live_precip > 0.0:
+            dynamic_modifier_applied = True
+
+    if live_sst is not None:
+        try:
+            sst = float(live_sst)
+            if not math.isnan(sst) and not math.isinf(sst):
+                live_sst_c = round(sst, 2)
+                # Elevated SST above 28C adds cyclone vulnerability risk points
+                if sst > 28.0:
+                    sst_penalty = (sst - 28.0) * 5.0
+                    dynamic_risk += sst_penalty
+                    dynamic_modifier_applied = True
+        except (ValueError, TypeError):
+            pass
+
+    if live_precipitation is not None or live_sst is not None:
+        dynamic_risk = round(min(max(dynamic_risk, 0.0), 100.0), 1)
         risk_score = dynamic_risk
         dynamic_risk_score = dynamic_risk
-        live_precipitation_mm = round(live_precip, 2)
-        dynamic_modifier_applied = bool(live_precip > 0.0)
     else:
         risk_score = base_risk_score
         dynamic_risk_score = None
-        live_precipitation_mm = None
-        dynamic_modifier_applied = False
 
     # Risk Tier Classification (Evaluated on active risk_score)
     if risk_score >= 75.0:
@@ -196,6 +220,7 @@ def calculate_risk_score(
         'base_risk_score': base_risk_score,
         'dynamic_risk_score': dynamic_risk_score,
         'live_precipitation_mm': live_precipitation_mm,
+        'live_sst_c': live_sst_c,
         'dynamic_modifier_applied': dynamic_modifier_applied,
         'risk_level': risk_level,
         'priority': priority,

@@ -16,7 +16,7 @@ if PROJECT_ROOT not in sys.path:
 from backend.clients.opentopodata import probe_opentopodata
 from backend.clients.openweathermap import probe_openweathermap
 from backend.clients.meteostat_client import probe_meteostat
-
+from backend.clients.oceansat import probe_oceansat
 
 def run_startup_diagnostics():
     """
@@ -29,17 +29,22 @@ def run_startup_diagnostics():
     topo_health = probe_opentopodata()
     mode_str = f"[{topo_health.mode.upper()}]"
     lat_str = f"{topo_health.latency_ms:.0f}ms" if topo_health.latency_ms is not None else "N/A"
-    print(f" [1/3] OpenTopoData (Elevation):   {mode_str:<10} ({topo_health.message}, {lat_str})")
+    print(f" [1/4] OpenTopoData (Elevation):   {mode_str:<10} ({topo_health.message}, {lat_str})")
 
     weather_health = probe_openweathermap(30.4934, 79.0547)
     mode_str = f"[{weather_health.mode.upper()}]"
     lat_str = f"{weather_health.latency_ms:.0f}ms" if weather_health.latency_ms is not None else "N/A"
-    print(f" [2/3] OpenWeatherMap (Weather):   {mode_str:<10} ({weather_health.message}, {lat_str})")
+    print(f" [2/4] OpenWeatherMap (Weather):   {mode_str:<10} ({weather_health.message}, {lat_str})")
 
     meteo_health = probe_meteostat()
     mode_str = f"[{meteo_health.mode.upper()}]"
     lat_str = f"{meteo_health.latency_ms:.0f}ms" if meteo_health.latency_ms is not None else "N/A"
-    print(f" [3/3] Meteostat (Climate Data):   {mode_str:<10} ({meteo_health.message}, {lat_str})")
+    print(f" [3/4] Meteostat (Climate Data):   {mode_str:<10} ({meteo_health.message}, {lat_str})")
+
+    oceansat_health = probe_oceansat()
+    mode_str = f"[{oceansat_health.mode.upper()}]"
+    lat_str = f"{oceansat_health.latency_ms:.0f}ms" if oceansat_health.latency_ms is not None else "N/A"
+    print(f" [4/4] OceanSat (Oceanographic):   {mode_str:<10} ({oceansat_health.message}, {lat_str})")
 
     print("----------------------------------------------------------------------")
     print(" Status: OPERATIONAL (Resilient Fallbacks Active)")
