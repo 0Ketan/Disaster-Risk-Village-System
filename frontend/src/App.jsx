@@ -109,6 +109,7 @@ export const App = () => {
       return;
     }
 
+    const currentId = selectedVillageId;
     const localFound = villages.find((v) => Number(v.id) === Number(selectedVillageId));
     if (localFound) {
       setSelectedVillage(localFound);
@@ -117,7 +118,14 @@ export const App = () => {
     // Also fetch full detail from API for any supplementary attributes
     getVillageById(selectedVillageId)
       .then((res) => {
-        if (isMounted && res && res.village) {
+        // Guard: only merge if the selection hasn't changed during the async request
+        // and the response village ID actually matches (prevents fallback contamination)
+        if (isMounted && res && res.village && currentId === selectedVillageId) {
+          const resVillageId = res.village.id;
+          if (resVillageId !== undefined && Number(resVillageId) !== Number(currentId)) {
+            console.warn(`Skipping merge: response village ID ${resVillageId} does not match selected ID ${currentId}`);
+            return;
+          }
           setSelectedVillage((prev) => ({ ...prev, ...res.village }));
         }
       })

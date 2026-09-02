@@ -4,6 +4,7 @@ import RiskGauge from './RiskGauge';
 import FactorBreakdown from './FactorBreakdown';
 import RelocationCard from './RelocationCard';
 import HazardZoneBadges from './HazardZoneBadges';
+import PredictiveLandslideForecast from './PredictiveLandslideForecast';
 import WarningBadge from '../common/WarningBadge';
 import { getRelocationSites } from '../../api/villages';
 
@@ -112,6 +113,11 @@ export const DetailDrawer = ({
         {/* Hazard Zone Classification */}
         <section>
           <HazardZoneBadges village={village} />
+        </section>
+
+        {/* Predictive Landslide Forecast (24h - 72h) */}
+        <section>
+          <PredictiveLandslideForecast village={village} />
         </section>
 
         {/* Priority & Quick Stats Grid */}

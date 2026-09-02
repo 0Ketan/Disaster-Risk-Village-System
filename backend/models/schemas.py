@@ -38,13 +38,15 @@ class Village(BaseModel):
     landslide_zone: str = Field(default="Green")  # "Red" | "Orange" | "Green"
     flood_zone: str = Field(default="Green")      # "Red" | "Orange" | "Green"
     cloudburst_zone: str = Field(default="Green") # "Red" | "Orange" | "Green"
-    coastal_erosion_zone: str = Field(default="Green") # "Red" | "Orange" | "Green"
+    coastal_erosion_zone: str = Field(default="Green") # "Red" | "Orange" | "Green" | "N/A"
     composite_hazard_label: str = Field(default="Low Multi-Hazard Exposure")
     hazard_zones: Optional[Dict[str, str]] = None
+    predictive_forecast: Optional[Dict[str, Any]] = None
     # Dynamic weather fields
     live_precipitation_mm: Optional[float] = None
     live_rainfall_mm: Optional[float] = None
     live_sst_c: Optional[float] = None
+    oceansat_telemetry: Optional[Dict[str, Any]] = None
     rainfall_source: Optional[str] = None
     weather_timestamp: Optional[str] = None
     dynamic_risk_score: Optional[float] = None
@@ -175,6 +177,7 @@ class DynamicVillage(Village):
     live_rainfall_mm: Optional[float] = None
     live_precipitation_mm: Optional[float] = None
     live_sst_c: Optional[float] = None
+    oceansat_telemetry: Optional[Dict[str, Any]] = None
     rainfall_source: Optional[str] = None
     weather_timestamp: Optional[str] = None
     dynamic_risk_score: Optional[float] = None

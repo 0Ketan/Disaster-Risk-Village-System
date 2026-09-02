@@ -102,7 +102,15 @@ def get_village_by_id(village_id: int):
     if not matching:
         raise HTTPException(status_code=404, detail=f"Village with ID {village_id} not found")
 
-    scored = calculate_risk_score(matching[0])
+    from ..clients.oceansat import get_oceansat_telemetry
+
+    lat = float(matching[0].get('latitude', 0.0))
+    lon = float(matching[0].get('longitude', 0.0))
+    
+    # Optional: fetch live precip here if desired, otherwise just telemetry
+    oceansat_data = get_oceansat_telemetry(lat, lon)
+    
+    scored = calculate_risk_score(matching[0], oceansat_telemetry=oceansat_data)
 
     # Enrich with elevation if not present
     if scored.get('elevation_m') is None:
@@ -176,7 +184,7 @@ def get_dashboard_summary():
     # Fix the weather health check - use dynamic state for weather status
     api_health_status = {
         "opentopodata": "live",
-        "openweathermap": "live" if dynamic_state.get('weather_status') == 'available' else "fallback",
+        "openmeteo": "live" if dynamic_state.get('weather_status') == 'available' else "fallback",
         "meteostat": "live"
     }
 
@@ -238,6 +246,36 @@ def get_village_hazard_zones(village_id: int):
         "vulnerability_index": scored.get('vulnerability_index', 5.0),
         "_source": "live"
     }
+
+
+@router.get("/villages/{village_id}/predictive-landslide")
+def get_village_predictive_landslide(village_id: int):
+    """Returns 24h-72h predictive landslide risk forecast for a village."""
+    raw_villages = load_villages_raw()
+    matching = [v for v in raw_villages if int(v.get('id', 0)) == village_id]
+    if not matching:
+        raise HTTPException(status_code=404, detail=f"Village {village_id} not found")
+
+    from ..clients.oceansat import get_oceansat_telemetry
+    from ..engines.risk_engine import generate_predictive_forecast
+    from ..clients.openmeteo import get_weather_sync
+
+    village = matching[0]
+    lat = float(village.get('latitude', 0.0))
+    lon = float(village.get('longitude', 0.0))
+
+    # Fetch live data for enhanced prediction
+    oceansat_data = get_oceansat_telemetry(lat, lon)
+    weather_data, source = get_weather_sync(lat, lon)
+
+    forecast = generate_predictive_forecast(
+        village,
+        oceansat_telemetry=oceansat_data,
+        weather_data=weather_data
+    )
+    forecast['_source'] = 'live' if oceansat_data or source == 'live' else 'baseline'
+
+    return forecast
 
 
 @router.get("/export/district-report")

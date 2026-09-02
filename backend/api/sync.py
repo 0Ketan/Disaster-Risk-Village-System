@@ -80,7 +80,7 @@ def trigger_sync_weather():
             src = v.get('rainfall_source', 'unknown')
             sources[src] = sources.get(src, 0) + 1
 
-        has_live = any(s in sources for s in ['OpenWeatherMap', 'OpenMeteo'])
+        has_live = any(s in sources for s in ['openmeteo', 'OpenMeteo'])
         has_fallback = 'fallback_cache' in sources
         if has_live and not has_fallback:
             status = 'success'

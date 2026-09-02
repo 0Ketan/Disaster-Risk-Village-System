@@ -13,8 +13,11 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__fi
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
+from dotenv import load_dotenv
+load_dotenv(os.path.join(PROJECT_ROOT, '.env'))
+
 from backend.clients.opentopodata import probe_opentopodata
-from backend.clients.openweathermap import probe_openweathermap
+from backend.clients.openmeteo import probe_openmeteo
 from backend.clients.meteostat_client import probe_meteostat
 from backend.clients.oceansat import probe_oceansat
 
@@ -31,10 +34,10 @@ def run_startup_diagnostics():
     lat_str = f"{topo_health.latency_ms:.0f}ms" if topo_health.latency_ms is not None else "N/A"
     print(f" [1/4] OpenTopoData (Elevation):   {mode_str:<10} ({topo_health.message}, {lat_str})")
 
-    weather_health = probe_openweathermap(30.4934, 79.0547)
+    weather_health = probe_openmeteo(30.4934, 79.0547)
     mode_str = f"[{weather_health.mode.upper()}]"
     lat_str = f"{weather_health.latency_ms:.0f}ms" if weather_health.latency_ms is not None else "N/A"
-    print(f" [2/4] OpenWeatherMap (Weather):   {mode_str:<10} ({weather_health.message}, {lat_str})")
+    print(f" [2/4] Open-Meteo (Weather):       {mode_str:<10} ({weather_health.message}, {lat_str})")
 
     meteo_health = probe_meteostat()
     mode_str = f"[{meteo_health.mode.upper()}]"

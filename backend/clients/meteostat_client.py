@@ -1,4 +1,4 @@
-﻿"""
+"""
 Resilient Meteostat Client for Climate Normals & Precipitation History.
 """
 
@@ -88,13 +88,22 @@ def probe_meteostat() -> APIHealthItem:
         import meteostat
         # Verify Point creation and library functionality
         p = meteostat.Point(30.4934, 79.0547)
+        end_dt = datetime.now()
+        start_dt = end_dt - timedelta(days=7)
+        if hasattr(meteostat, 'Daily'):
+            ts = meteostat.Daily(p, start_dt, end_dt)
+            df = ts.fetch()
+        elif hasattr(meteostat, 'daily'):
+            ts = meteostat.daily(p, start_dt, end_dt)
+            df = ts.fetch()
+            
         latency = round((time.perf_counter() - start_time) * 1000, 1)
         return APIHealthItem(
             service="Meteostat",
             status="healthy",
             mode="live",
             latency_ms=max(0.5, latency),
-            message="Library active (Point spatial index OK)"
+            message="Library active and fetched data (200 OK equivalent)"
         )
     except Exception as exc:
         latency = round((time.perf_counter() - start_time) * 1000, 1)

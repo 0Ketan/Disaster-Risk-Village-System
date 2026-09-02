@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi import APIRouter
 from ..models.schemas import SystemHealthResponse
 from ..clients.opentopodata import probe_opentopodata
-from ..clients.openweathermap import probe_openweathermap
+from ..clients.openmeteo import probe_openmeteo
 from ..clients.meteostat_client import probe_meteostat
 from ..clients.oceansat import probe_oceansat
 
@@ -16,11 +16,11 @@ router = APIRouter(prefix="/api", tags=["Health"])
 @router.get("/health", response_model=SystemHealthResponse)
 def get_system_health():
     """
-    Performs live connectivity checks against OpenTopoData, OpenWeatherMap, Meteostat, and OceanSat.
+    Performs live connectivity checks against OpenTopoData, openmeteo, Meteostat, and OceanSat.
     Returns overall system status and individual service diagnostic metrics.
     """
     topo_health = probe_opentopodata()
-    weather_health = probe_openweathermap()
+    weather_health = probe_openmeteo()
     meteo_health = probe_meteostat()
     oceansat_health = probe_oceansat()
 

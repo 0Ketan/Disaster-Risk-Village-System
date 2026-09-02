@@ -292,13 +292,13 @@ def fetch_live_weather_with_metadata(villages: List[Dict[str, Any]]) -> Dict[str
     }
 
 
-def fetch_openweathermap_weather(villages: List[Dict[str, Any]]) -> Dict[int, float]:
+def fetch_openmeteo_weather(villages: List[Dict[str, Any]]) -> Dict[int, float]:
     """
-    Fetches live precipitation from OpenWeatherMap API for a collection of villages.
+    Fetches live precipitation from openmeteo API for a collection of villages.
     Uses the same resilient pattern as Open-Meteo with 8s timeout and 1 retry.
     Returns Dict[int, float] mapping village_id -> live precipitation in mm.
     """
-    result = fetch_openweathermap_weather_with_metadata(villages)
+    result = fetch_openmeteo_weather_with_metadata(villages)
     return result.get("weather_map", {})
 
 
@@ -308,9 +308,9 @@ def fetch_live_weather(villages: List[Dict[str, Any]]) -> Dict[int, float]:
     return result.get("weather_map", {})
 
 
-def fetch_openweathermap_weather_with_metadata(villages: List[Dict[str, Any]]) -> Dict[str, Any]:
+def fetch_openmeteo_weather_with_metadata(villages: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
-    OpenWeatherMap compatibility wrapper for fetch_live_weather_with_metadata.
+    openmeteo compatibility wrapper for fetch_live_weather_with_metadata.
     Delegates to the Open-Meteo implementation and returns the same structure.
     """
     return fetch_live_weather_with_metadata(villages)
@@ -332,12 +332,12 @@ def fetch_weather_batch(villages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return results
 
 
-# Alias for OpenWeatherMap compatibility
+# Alias for openmeteo compatibility
 
-def fetch_openweathermap_weather_for_village(lat: float, lon: float, fallback_precip: float = 0.0) -> Dict[str, Any]:
+def fetch_openmeteo_weather_for_village(lat: float, lon: float, fallback_precip: float = 0.0) -> Dict[str, Any]:
     """Compatibility wrapper that forwards to the Open-Meteo implementation.
     The function name is kept for backward‑compatibility with the dynamic
-    risk engine which expects an ``OpenWeatherMap``‑specific API.
+    risk engine which expects an ``openmeteo``‑specific API.
     """
     return fetch_live_weather_for_village(lat, lon, fallback_precip)
 

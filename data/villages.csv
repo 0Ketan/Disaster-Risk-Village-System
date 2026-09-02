@@ -1,6 +1,6 @@
 id,name,district,state,latitude,longitude,population,slope_degrees,annual_rainfall_mm,past_landslides,flood_risk_index,road_access_score,vulnerability_index
 1,Ukhimath,Rudraprayag,Uttarakhand,30.4934,79.0547,2100,35,2800,4,8,3,7
-2,Kedarnath,Rudraprayag,Uttarakhand,30.7352,79.0669,600,42,3100,5,9,1,9
+2,Kedarnath,Rudraprayag,Uttarakhand,30.7345,79.0669,600,42,3100,5,9,1,9
 3,Gaurikund,Rudraprayag,Uttarakhand,30.5833,79.0333,1400,38,2950,4,8,2,8
 4,Phata,Rudraprayag,Uttarakhand,30.5400,79.0300,1850,28,2400,3,6,4,6
 5,Sonprayag,Rudraprayag,Uttarakhand,30.6300,78.9900,1200,36,2900,4,9,3,7
@@ -18,7 +18,7 @@ id,name,district,state,latitude,longitude,population,slope_degrees,annual_rainfa
 17,Chopta,Rudraprayag,Uttarakhand,30.4850,79.1760,450,22,2300,1,3,6,4
 18,Sumari,Rudraprayag,Uttarakhand,30.2500,78.8500,3100,8,1500,0,2,8,3
 19,Mundakkai,Wayanad,Kerala,11.5800,76.0300,950,38,3200,6,7,3,8
-20,Chooralmala,Wayanad,Kerala,11.5750,76.0250,1200,42,3500,8,8,2,9
+20,Chooralmala,Wayanad,Kerala,11.5547,76.1770,1200,42,3500,8,8,2,9
 21,Meppadi,Wayanad,Kerala,11.5100,76.0700,4100,22,2800,2,6,6,5
 22,Vythiri,Wayanad,Kerala,11.5200,76.0400,3200,18,2600,1,5,7,4
 23,Kalpetta,Wayanad,Kerala,11.6000,76.0800,28000,8,2200,0,3,9,2
@@ -41,3 +41,5 @@ id,name,district,state,latitude,longitude,population,slope_degrees,annual_rainfa
 40,Rohini,Darjeeling,West Bengal,26.8500,88.2500,2100,28,2400,2,5,5,5
 41,Pankhabari,Darjeeling,West Bengal,26.9800,88.2800,3100,22,2300,1,4,6,4
 42,Rangli Rangliot,Darjeeling,West Bengal,27.0800,88.4000,2600,35,2700,3,6,4,7
+43,Munnar,Idukki,Kerala,10.0889,77.0595,1500,38,3200,5,7,2,8
+44,Darjeeling,Darjeeling,West Bengal,27.0410,88.2663,2000,36,3100,5,6,2,7

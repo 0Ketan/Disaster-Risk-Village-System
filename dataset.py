@@ -48,10 +48,11 @@ def fetch_oceansat2_via_api(dataset_id, lat, lon, target_date):
         else:
             target_date = target_date.tz_convert("UTC")
 
-        # 2. Build a small bounding box around the target point
-        #    This prevents downloading the entire global dataset (413 error).
-        lat_margin = 1.0  # +/- 1 degree
-        lon_margin = 1.0
+        # 2. Build a bounding box around the target point
+        #    Use a wide margin (10 degrees) so inland villages can still find 
+        #    the nearest coastal/marine boundary cell without returning empty data.
+        lat_margin = 10.0
+        lon_margin = 10.0
         time_margin = pd.Timedelta(days=1)
 
         time_min = (target_date - time_margin).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -64,21 +65,24 @@ def fetch_oceansat2_via_api(dataset_id, lat, lon, target_date):
         )
         e.dataset_id = dataset_id
 
-        # Initialize griddap to fetch coordinate metadata (required before setting constraints)
+        # Initialize griddap to fetch coordinate metadata
         e.griddap_initialize()
 
-        # Update the constraints with our bounding box
+        # Update the constraints with our bounding box, ensuring we don't exceed global limits
         e.constraints["time>="] = time_min
         e.constraints["time<="] = time_max
-        e.constraints["latitude>="] = lat - lat_margin
-        e.constraints["latitude<="] = lat + lat_margin
-        e.constraints["longitude>="] = lon - lon_margin
-        e.constraints["longitude<="] = lon + lon_margin
+        e.constraints["latitude>="] = max(-89.9, lat - lat_margin)
+        e.constraints["latitude<="] = min(89.9, lat + lat_margin)
+        
+        # Determine longitude bounds format (0-360 or -180 to 180) from dataset metadata
+        # Assume -180 to 180 for standard NOAA griddap datasets if we cannot read bounds easily
+        e.constraints["longitude>="] = max(-179.9, lon - lon_margin)
+        e.constraints["longitude<="] = min(179.9, lon + lon_margin)
 
         print(f"Constraints set:")
         print(f"  time:      {time_min} to {time_max}")
-        print(f"  latitude:  {lat - lat_margin:.4f} to {lat + lat_margin:.4f}")
-        print(f"  longitude: {lon - lon_margin:.4f} to {lon + lon_margin:.4f}")
+        print(f"  latitude:  {e.constraints['latitude>=']:.4f} to {e.constraints['latitude<=']:.4f}")
+        print(f"  longitude: {e.constraints['longitude>=']:.4f} to {e.constraints['longitude<=']:.4f}")
         print()
 
         # 4. Download the constrained subset into xarray

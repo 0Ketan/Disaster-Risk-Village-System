@@ -6,9 +6,9 @@ import os
 from backend.engines.risk_engine import calculate_risk_score, score_all_villages
 from backend.engines.relocation_engine import find_best_sites
 from backend.services.weather_service import (
-    fetch_openweathermap_weather,
-    fetch_openweathermap_weather_with_metadata,
-    fetch_openweathermap_weather_for_village,
+    fetch_openmeteo_weather,
+    fetch_openmeteo_weather_with_metadata,
+    fetch_openmeteo_weather_for_village,
     fetch_live_weather,
     fetch_live_weather_with_metadata,
     fetch_live_weather_for_village,
@@ -153,7 +153,7 @@ def recalculate_all_villages_dynamic():
             lat = village.get('latitude', 0)
             lon = village.get('longitude', 0)
             
-            weather_data = fetch_openweathermap_weather_for_village(lat, lon)
+            weather_data = fetch_openmeteo_weather_for_village(lat, lon)
             elevation_m, elev_source = get_cached_elevation(lat, lon)
             
             village['rainfall_source'] = weather_data.get('rainfall_source', 'fallback_cache')

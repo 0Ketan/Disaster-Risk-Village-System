@@ -13,52 +13,98 @@ import { Mountain, CloudRain, AlertTriangle, Waves, Compass, HelpCircle } from '
 export const FactorBreakdown = ({ village }) => {
   if (!village) return null;
 
+  // Helper to determine regional flood description
+  const getFloodDescription = (state) => {
+    const s = (state || '').toLowerCase();
+    if (s.includes('uttarakhand') || s.includes('himachal') || s.includes('ladakh')) {
+      return 'Proximity to glacial runoff & high-altitude glacial lake outburst basins';
+    }
+    if (s.includes('kerala') || s.includes('karnataka') || s.includes('maharashtra') || s.includes('tamil nadu')) {
+      return 'Proximity to swollen monsoon river catchments & intense hill-slope runoff';
+    }
+    if (s.includes('west bengal') || s.includes('sikkim') || s.includes('assam')) {
+      return 'Proximity to steep mountain stream catchments & heavy rain flash-flood basins';
+    }
+    return 'Proximity to low-lying drainage channels & riverine flash-flood basins';
+  };
+
   // Extract raw and normalized score values
+  const slopeDeg = village.slope_degrees || 0;
+  const slopeScore = village.slope_score !== undefined ? village.slope_score : ((slopeDeg / 45) * 10 || 5);
+  
+  const rainMm = village.annual_rainfall_mm || 0;
+  const rainScore = village.rainfall_score !== undefined ? village.rainfall_score : ((rainMm / 3500) * 10 || 5);
+  
+  const pastLs = village.past_landslides || 0;
+  const lsScore = village.landslide_score !== undefined ? village.landslide_score : (Math.min(10, pastLs * 2) || 0);
+  
+  const floodRisk = village.flood_risk_index || 5;
+  const floodScore = village.flood_score !== undefined ? village.flood_score : floodRisk;
+  
+  const roadAcc = village.road_access_score || 5;
+  const roadScore = village.road_score !== undefined ? village.road_score : (10 - roadAcc);
+
   const factors = [
     {
       id: 'slope',
       label: 'Terrain Slope',
       icon: Mountain,
       rawValue: village.slope_degrees !== undefined ? `${village.slope_degrees}°` : 'N/A',
-      score: village.slope_score !== undefined ? village.slope_score : (village.slope_degrees ? (village.slope_degrees / 45) * 10 : 5),
+      score: slopeScore,
       weight: '25%',
-      description: 'Steepness increases landslide and rockfall velocity'
+      description: slopeDeg >= 30 
+        ? 'Extreme steepness severely increases landslide and rockfall velocity' 
+        : slopeDeg >= 15 
+          ? 'Moderate steepness contributes to slope instability during heavy rains'
+          : 'Gentle terrain with low gravity-driven hazard risk'
     },
     {
       id: 'rainfall',
       label: 'Rainfall Intensity',
       icon: CloudRain,
       rawValue: village.annual_rainfall_mm !== undefined ? `${village.annual_rainfall_mm} mm` : 'N/A',
-      score: village.rainfall_score !== undefined ? village.rainfall_score : (village.annual_rainfall_mm ? (village.annual_rainfall_mm / 3500) * 10 : 5),
+      score: rainScore,
       weight: '25%',
-      description: 'Monsoon saturation triggers debris flows'
+      description: rainMm >= 2500 
+        ? 'Extreme monsoon saturation heavily triggers debris flows and slope failure' 
+        : rainMm >= 1500 
+          ? 'High annual precipitation contributes to continuous soil saturation'
+          : 'Moderate rainfall with lower continuous saturation risk'
     },
     {
       id: 'landslides',
       label: 'Past Landslides',
       icon: AlertTriangle,
       rawValue: village.past_landslides !== undefined ? `${village.past_landslides} events` : '0 events',
-      score: village.landslide_score !== undefined ? village.landslide_score : (village.past_landslides ? Math.min(10, village.past_landslides * 2) : 0),
+      score: lsScore,
       weight: '20%',
-      description: 'Historical soil instability and active slide scars'
+      description: pastLs >= 3 
+        ? 'Frequent historical soil instability with active, high-risk slide scars' 
+        : pastLs > 0 
+          ? 'Known history of localized slope failures and terrain shifts'
+          : 'No major recorded historical landslide events in this immediate vicinity'
     },
     {
       id: 'flood',
       label: 'Flood Exposure',
       icon: Waves,
       rawValue: village.flood_risk_index !== undefined ? `${village.flood_risk_index} / 10` : 'N/A',
-      score: village.flood_score !== undefined ? village.flood_score : (village.flood_risk_index || 5),
+      score: floodScore,
       weight: '20%',
-      description: 'Proximity to glacial runoff & flash-flood basins'
+      description: getFloodDescription(village.state)
     },
     {
       id: 'road',
       label: 'Road Access & Isolation',
       icon: Compass,
       rawValue: village.road_access_score !== undefined ? `${village.road_access_score} / 10` : 'N/A',
-      score: village.road_score !== undefined ? village.road_score : (10 - (village.road_access_score || 5)),
+      score: roadScore,
       weight: '10%',
-      description: 'Vulnerability due to single-access road cutoffs'
+      description: roadScore >= 7.5 
+        ? 'High vulnerability due to severe isolation and single-access road cutoffs' 
+        : roadScore >= 4.0 
+          ? 'Moderate isolation with potential for supply line and evacuation disruptions'
+          : 'Well-connected with multiple robust evacuation routes and supply lines'
     }
   ];
 
@@ -84,9 +130,16 @@ export const FactorBreakdown = ({ village }) => {
         <span className="text-xs font-bold text-on-surface uppercase tracking-wider">
           Multi-Factor Hazard Breakdown
         </span>
-        <span className="text-[10px] text-on-surface-variant font-medium">
-          5 Weighted Criteria
-        </span>
+        <div className="flex items-center gap-2">
+          {village.oceansat_telemetry && (
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold border border-blue-500/20">
+              OceanSat Wind: {village.oceansat_telemetry.wind_speed_ms} m/s
+            </span>
+          )}
+          <span className="text-[10px] text-on-surface-variant font-medium">
+            5 Weighted Criteria
+          </span>
+        </div>
       </div>
 
       <div className="p-4 space-y-4">

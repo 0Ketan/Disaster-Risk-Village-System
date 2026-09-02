@@ -134,8 +134,8 @@ export const MapView = ({
           <div style="font-size: 10px; color: #45464d; background: #f2f4f7; padding: 4px; border-radius: 4px; margin-bottom: 4px; text-align: center; white-space: nowrap;">
             Landslide: ${village.hazard_zones?.landslide === 'Red' ? '🔴' : village.hazard_zones?.landslide === 'Orange' ? '🟠' : village.hazard_zones?.landslide === 'Green' ? '🟢' : '⚪'} | 
             Flood: ${village.hazard_zones?.flood === 'Red' ? '🔴' : village.hazard_zones?.flood === 'Orange' ? '🟠' : village.hazard_zones?.flood === 'Green' ? '🟢' : '⚪'} | 
-            Cloudburst: ${village.hazard_zones?.cloudburst === 'Red' ? '🔴' : village.hazard_zones?.cloudburst === 'Orange' ? '🟠' : village.hazard_zones?.cloudburst === 'Green' ? '🟢' : '⚪'} | 
-            Coastal Erosion: ${village.hazard_zones?.coastal_erosion === 'Red' ? '🔴' : village.hazard_zones?.coastal_erosion === 'Orange' ? '🟠' : village.hazard_zones?.coastal_erosion === 'Green' ? '🟢' : '⚪'}
+            Cloudburst: ${village.hazard_zones?.cloudburst === 'Red' ? '🔴' : village.hazard_zones?.cloudburst === 'Orange' ? '🟠' : village.hazard_zones?.cloudburst === 'Green' ? '🟢' : '⚪'} &nbsp;
+            Coastal Erosion: ${village.hazard_zones?.coastal_erosion === 'Red' ? '🔴' : village.hazard_zones?.coastal_erosion === 'Orange' ? '🟠' : village.hazard_zones?.coastal_erosion === 'N/A' ? '⚫' : village.hazard_zones?.coastal_erosion === 'Green' ? '🟢' : '⚪'}
           </div>
           ${(village.live_rainfall_mm !== undefined && village.live_rainfall_mm !== null && village.live_rainfall_mm > 0) ? `
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #0284c7; margin-bottom: 4px;">
