@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import axios from 'axios';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getMarkerRadius, getRiskColor, getRiskLevel } from './VillageMarker';
@@ -26,6 +27,25 @@ export const MapView = ({
   const mapInstanceRef = useRef(null);
   const markersLayerRef = useRef(null);
   const selectedHaloRef = useRef(null);
+
+  const [mlPriorityData, setMlPriorityData] = React.useState([]);
+  const [floodRiskData, setFloodRiskData] = React.useState([]);
+
+  useEffect(() => {
+    import('../../api/client.js').then(({ default: apiClient }) => {
+        // Fetch existing ML Priority logic
+        if (villages && villages.length > 0) {
+            apiClient.post('/api/ml/evaluate-habitations', villages)
+                 .then(res => setMlPriorityData(res.data.data))
+                 .catch(err => console.error("ML Engine fetch error:", err));
+        }
+        
+        // Fetch Phase 2 Flood Risk Dashboard data
+        apiClient.get('/api/flood/dashboard')
+             .then(res => setFloodRiskData(res.data.data))
+             .catch(err => console.error("Flood API fetch error:", err));
+    });
+  }, [villages]);
 
   const [filterLandslide, setFilterLandslide] = React.useState(false);
   const [filterFlood, setFilterFlood] = React.useState(false);
@@ -97,11 +117,30 @@ export const MapView = ({
       const lng = Number(village.longitude);
       if (isNaN(lat) || isNaN(lng)) return;
 
-      const isSelected = Number(selectedVillageId) === Number(village.id);
+      const isSelected = String(selectedVillageId) === String(village.id);
+      
+      const mlData = mlPriorityData.find(m => m.habitation_id === village.id);
+      const floodData = floodRiskData.find(f => f.village_id === village.id);
+
+      const isRedZone = mlData ? mlData.Zone_Category === "Red Zone" : false;
+      const priorityScore = mlData ? mlData.Relocation_Priority_Score : 'N/A';
+      const zoneCategory = mlData ? mlData.Zone_Category : 'N/A';
+
       const score = Math.round(village.risk_score || 0);
       const level = village.risk_level || getRiskLevel(score);
       const radius = getMarkerRadius(village.population);
-      const color = getRiskColor(score);
+      const baseColor = getRiskColor(score);
+      
+      let color = baseColor;
+      if (floodData) {
+        if (floodData.risk_level === 'CRITICAL') color = '#ef4444';
+        else if (floodData.risk_level === 'HIGH') color = '#f97316';
+        else if (floodData.risk_level === 'MODERATE') color = '#eab308';
+        else color = '#22c55e';
+      } else if (mlData) {
+        color = isRedZone ? '#ef4444' : '#22c55e';
+      }
+
       const isFallback = village._source === 'fallback';
 
       // Create CircleMarker
@@ -131,21 +170,15 @@ export const MapView = ({
             <span>Population:</span>
             <span style="font-weight: 600;">${village.population ? village.population.toLocaleString() : 'N/A'}</span>
           </div>
-          <div style="font-size: 10px; color: #45464d; background: #f2f4f7; padding: 4px; border-radius: 4px; margin-bottom: 4px; text-align: center; white-space: nowrap;">
-            Landslide: ${village.hazard_zones?.landslide === 'Red' ? '🔴' : village.hazard_zones?.landslide === 'Orange' ? '🟠' : village.hazard_zones?.landslide === 'Green' ? '🟢' : '⚪'} | 
-            Flood: ${village.hazard_zones?.flood === 'Red' ? '🔴' : village.hazard_zones?.flood === 'Orange' ? '🟠' : village.hazard_zones?.flood === 'Green' ? '🟢' : '⚪'} | 
-            Cloudburst: ${village.hazard_zones?.cloudburst === 'Red' ? '🔴' : village.hazard_zones?.cloudburst === 'Orange' ? '🟠' : village.hazard_zones?.cloudburst === 'Green' ? '🟢' : '⚪'} | 
-            Coastal Erosion: ${village.hazard_zones?.coastal_erosion === 'Red' ? '🔴' : village.hazard_zones?.coastal_erosion === 'Orange' ? '🟠' : village.hazard_zones?.coastal_erosion === 'Green' ? '🟢' : '⚪'}
-          </div>
-          ${(village.live_rainfall_mm !== undefined && village.live_rainfall_mm !== null && village.live_rainfall_mm > 0) ? `
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #0284c7; margin-bottom: 4px;">
-              <span>Live Rainfall:</span>
-              <span style="font-weight: 700;">${Number(village.live_rainfall_mm).toFixed(1)} mm</span>
-            </div>
+          ${floodData ? `
+             <div style="margin-top: 6px; padding: 4px 6px; background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 4px; color: #0369a1; font-size: 11px; text-align: center;">
+                <b>Flood Risk: ${floodData.risk_level}</b>
+             </div>
           ` : ''}
-          ${isFallback ? `
-            <div style="margin-top: 6px; padding: 2px 6px; background: #fef08a; border: 1px solid #fde047; border-radius: 4px; color: #854d0e; font-size: 10px; font-weight: 600; text-align: center;">
-              ⚠ Cached data
+          ${mlData && !floodData ? `
+            <div style="margin-top: 6px; padding: 4px 6px; background: ${isRedZone ? '#fef2f2' : '#f0fdf4'}; border: 1px solid ${isRedZone ? '#f87171' : '#4ade80'}; border-radius: 4px; color: ${isRedZone ? '#991b1b' : '#166534'}; font-size: 11px; text-align: center;">
+              <b>Priority Score: ${priorityScore}/100</b><br/>
+              Zone: ${zoneCategory === 'Red Zone' ? '🔴 Red Zone' : '🟢 ' + zoneCategory}
             </div>
           ` : ''}
         </div>
@@ -153,7 +186,10 @@ export const MapView = ({
       marker.bindPopup(popupHtml);
 
       // Bind hover tooltip
-      marker.bindTooltip(`<b>${village.name}</b> (${score}/100)`, {
+      const tooltipText = mlData 
+          ? `<b>${village.name}</b><br>Priority: ${priorityScore}/100<br>Zone: ${zoneCategory}` 
+          : `<b>${village.name}</b> (${score}/100)`;
+      marker.bindTooltip(tooltipText, {
         direction: 'top',
         offset: [0, -radius],
         opacity: 0.9,
@@ -180,7 +216,7 @@ export const MapView = ({
         selectedHaloRef.current = halo;
       }
     });
-  }, [filteredVillages, selectedVillageId, onVillageSelect]);
+  }, [filteredVillages, selectedVillageId, onVillageSelect, mlPriorityData, floodRiskData]);
 
   // Handle map container resizing (fixes the black bar when sidebar slides)
   useEffect(() => {
@@ -204,7 +240,7 @@ export const MapView = ({
     const map = mapInstanceRef.current;
     if (!map || !selectedVillageId) return;
 
-    const selected = villages.find((v) => Number(v.id) === Number(selectedVillageId));
+    const selected = villages.find((v) => String(v.id) === String(selectedVillageId));
     if (selected && selected.latitude && selected.longitude) {
       map.flyTo([Number(selected.latitude), Number(selected.longitude)], 12, {
         animate: true,

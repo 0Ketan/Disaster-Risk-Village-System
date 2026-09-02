@@ -21,6 +21,7 @@ if BASE_DIR not in sys.path:
 from backend.api.health import router as health_router
 from backend.api.endpoints import router as api_router
 from backend.api.sync import router as sync_router
+from backend.api.priority import router as priority_router
 from backend.engines.dynamic_risk_engine import (
     recalculate_all_villages_dynamic,
     refresh_dynamic_state,
@@ -78,6 +79,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 app.include_router(health_router)
 app.include_router(sync_router)
 app.include_router(api_router)
+app.include_router(priority_router)
 
 
 @app.get("/")

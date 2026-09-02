@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Shield, AlertTriangle, Users, Home, MapPin, RefreshCw, Layers, CheckCircle2, Clock } from 'lucide-react';
 import VillageTable from './VillageTable';
 import WarningBadge from '../common/WarningBadge';
+import FloodRiskMonitor from './FloodRiskMonitor';
 
 /**
  * DashboardView Component
@@ -244,6 +245,9 @@ export const DashboardView = ({
             </div>
           </div>
         </section>
+
+        {/* Phase 2: Flood Risk Monitor */}
+        <FloodRiskMonitor />
 
         {/* Master Village Data Table */}
         <section>
