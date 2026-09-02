@@ -24,6 +24,7 @@ from ..engines.risk_engine import calculate_risk_score, score_all_villages
 from ..engines.relocation_engine import find_best_sites
 from ..clients.opentopodata import get_elevation_sync
 from ..engines.dynamic_risk_engine import get_dynamic_state
+from ..data_loader import load_villages_csv, load_relocation_sites_csv, load_coastal_erosion_json
 
 logger = logging.getLogger("villageshield.api")
 
@@ -37,29 +38,13 @@ SITES_CSV = os.path.join(DATA_DIR, "relocation_sites.csv")
 
 
 def load_villages_raw() -> List[Dict[str, Any]]:
-    """Loads raw villages dataset from CSV."""
-    if not os.path.exists(VILLAGES_CSV):
-        logger.error(f"Villages CSV not found at {VILLAGES_CSV}")
-        return []
-    try:
-        df = pd.read_csv(VILLAGES_CSV)
-        return df.to_dict(orient="records")
-    except Exception as exc:
-        logger.error(f"Error reading villages CSV: {exc}")
-        return []
+    """Loads raw villages dataset from the exact data/villages.csv file."""
+    return load_villages_csv()
 
 
 def load_relocation_sites_raw() -> List[Dict[str, Any]]:
     """Loads raw relocation sites dataset from CSV."""
-    if not os.path.exists(SITES_CSV):
-        logger.error(f"Relocation sites CSV not found at {SITES_CSV}")
-        return []
-    try:
-        df = pd.read_csv(SITES_CSV)
-        return df.to_dict(orient="records")
-    except Exception as exc:
-        logger.error(f"Error reading relocation sites CSV: {exc}")
-        return []
+    return load_relocation_sites_csv()
 
 
 @router.get("/villages")
@@ -266,5 +251,33 @@ def export_district_report(district: Optional[str] = Query(None)):
         },
         "immediate_action_villages": critical[:5],
         "short_term_villages": high[:5],
+        "_source": "live"
+    }
+
+
+@router.get("/coastal-erosion")
+def get_coastal_erosion():
+    """Returns all Odisha coastal erosion records."""
+    data = load_coastal_erosion_json()
+    return {"coastal_locations": data, "_source": "live"}
+
+@router.get("/coastal-erosion/summary")
+def get_coastal_erosion_summary():
+    """Returns summary for the Coastal Erosion dashboard."""
+    data = load_coastal_erosion_json()
+    
+    total_locations = len(data)
+    erosion_locations = sum(1 for d in data if d.get("hazard_type") == "Coastal Erosion")
+    accretion_locations = sum(1 for d in data if d.get("hazard_type") == "Accretion")
+    
+    total_erosion_area = sum(float(d.get("erosion_area_sq_m", 0)) for d in data if d.get("hazard_type") == "Coastal Erosion" and d.get("erosion_area_sq_m"))
+    total_accretion_area = sum(abs(float(d.get("erosion_area_sq_m", 0))) for d in data if d.get("hazard_type") == "Accretion" and d.get("erosion_area_sq_m"))
+    
+    return {
+        "total_locations": total_locations,
+        "erosion_locations": erosion_locations,
+        "accretion_locations": accretion_locations,
+        "total_erosion_area": total_erosion_area,
+        "total_accretion_area": total_accretion_area,
         "_source": "live"
     }

@@ -34,8 +34,8 @@ export const DashboardView = ({
     return ['All Districts', ...Array.from(districts)];
   }, [villages, selectedState]);
 
-  // Base villages filtered by state and district
-  const baseVillages = useMemo(() => {
+  // Filter variables
+  const filteredVillages = useMemo(() => {
     return villages.filter((v) => {
       const matchState = selectedState === 'All States' || v.state === selectedState;
       const matchDistrict = selectedDistrict === 'All Districts' || v.district === selectedDistrict;
@@ -43,13 +43,27 @@ export const DashboardView = ({
     });
   }, [villages, selectedState, selectedDistrict]);
 
-  // Calculate dynamic stats
-  const criticalCount = baseVillages.filter((v) => (v.risk_score >= 81 || v.risk_level === 'Critical')).length;
-  const highCount = baseVillages.filter((v) => (v.risk_score >= 61 && v.risk_score <= 80) || v.risk_level === 'High').length;
-  const moderateCount = baseVillages.filter((v) => (v.risk_score >= 31 && v.risk_score <= 60) || v.risk_level === 'Moderate').length;
-  const lowCount = baseVillages.filter((v) => (v.risk_score < 31 || v.risk_level === 'Low')).length;
+  // Base villages (Uttarakhand/West Bengal standard ones)
+  const baseVillages = useMemo(() => filteredVillages.filter(v => !v.is_coastal_erosion), [filteredVillages]);
+  
+  // Coastal Erosion villages
+  const coastalVillages = useMemo(() => filteredVillages.filter(v => v.is_coastal_erosion), [filteredVillages]);
+  
+  const criticalCount = baseVillages.filter(v => v.risk_score >= 81 || v.risk_level === 'Critical').length;
+  const highCount = baseVillages.filter(v => (v.risk_score >= 61 && v.risk_score <= 80) || v.risk_level === 'High').length;
+  const moderateCount = baseVillages.filter(v => (v.risk_score >= 31 && v.risk_score <= 60) || v.risk_level === 'Moderate').length;
+  const lowCount = baseVillages.filter(v => v.risk_score <= 30 || v.risk_level === 'Low').length;
+
   const totalPop = baseVillages.reduce((sum, v) => sum + (Number(v.population) || 0), 0);
-  const relocationsNeeded = baseVillages.filter((v) => Number(v.risk_score) >= 70).length;
+  const relocationsNeeded = baseVillages.filter(v => v.risk_score >= 70).length;
+
+  // Coastal metrics
+  const coastalTotal = coastalVillages.length;
+  const coastalErosionLocations = coastalVillages.filter(v => v.hazard_type === 'Coastal Erosion').length;
+  const coastalAccretionLocations = coastalVillages.filter(v => v.hazard_type === 'Accretion').length;
+  const totalErosionArea = coastalVillages.filter(v => v.hazard_type === 'Coastal Erosion').reduce((sum, v) => sum + (v.erosion_area_sq_m || 0), 0);
+  const totalAccretionArea = coastalVillages.filter(v => v.hazard_type === 'Accretion').reduce((sum, v) => sum + Math.abs(v.erosion_area_sq_m || 0), 0);
+
 
   const hasFallback = baseVillages.some((v) => v._source === 'fallback') || summary?._source === 'fallback';
 
@@ -244,6 +258,38 @@ export const DashboardView = ({
             </div>
           </div>
         </section>
+
+        {/* Coastal Erosion Monitoring Section */}
+        {coastalTotal > 0 && (
+          <section className="bg-blue-50/50 p-5 rounded-xl border border-blue-100 shadow-sm">
+            <div className="mb-4 flex items-center gap-2 text-blue-900">
+              <span className="text-lg">🌊</span>
+              <h3 className="text-base font-extrabold">Coastal Erosion Monitoring (Odisha)</h3>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="bg-white p-3 rounded-lg border border-blue-100 shadow-xs">
+                <div className="text-[10px] font-bold uppercase text-blue-600 mb-1">Locations Tracked</div>
+                <div className="text-xl font-black text-blue-900">{coastalTotal}</div>
+              </div>
+              <div className="bg-white p-3 rounded-lg border border-red-100 shadow-xs">
+                <div className="text-[10px] font-bold uppercase text-red-600 mb-1">Erosion Hotspots</div>
+                <div className="text-xl font-black text-red-700">{coastalErosionLocations}</div>
+              </div>
+              <div className="bg-white p-3 rounded-lg border border-red-100 shadow-xs">
+                <div className="text-[10px] font-bold uppercase text-red-600 mb-1">Total Erosion Area</div>
+                <div className="text-xl font-black text-red-700">{formatNumber(totalErosionArea)} <span className="text-xs">m²</span></div>
+              </div>
+              <div className="bg-white p-3 rounded-lg border border-emerald-100 shadow-xs">
+                <div className="text-[10px] font-bold uppercase text-emerald-600 mb-1">Accretion Zones</div>
+                <div className="text-xl font-black text-emerald-700">{coastalAccretionLocations}</div>
+              </div>
+              <div className="bg-white p-3 rounded-lg border border-emerald-100 shadow-xs">
+                <div className="text-[10px] font-bold uppercase text-emerald-600 mb-1">Total Accretion Area</div>
+                <div className="text-xl font-black text-emerald-700">{formatNumber(totalAccretionArea)} <span className="text-xs">m²</span></div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Master Village Data Table */}
         <section>

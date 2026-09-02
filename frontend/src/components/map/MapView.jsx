@@ -97,10 +97,10 @@ export const MapView = ({
       const lng = Number(village.longitude);
       if (isNaN(lat) || isNaN(lng)) return;
 
-      const isSelected = Number(selectedVillageId) === Number(village.id);
+      const isSelected = String(selectedVillageId) === String(village.id);
       const score = Math.round(village.risk_score || 0);
       const level = village.risk_level || getRiskLevel(score);
-      const radius = getMarkerRadius(village.population);
+      const radius = village.is_coastal_erosion ? 10 : getMarkerRadius(village.population);
       const color = getRiskColor(score);
       const isFallback = village._source === 'fallback';
 
@@ -114,46 +114,74 @@ export const MapView = ({
         fillOpacity: isSelected ? 0.95 : 0.82,
       });
 
-      // Bind rich popup
-      const popupHtml = `
-        <div style="font-family: 'Inter', sans-serif; min-width: 180px;">
-          <div style="font-size: 14px; font-weight: 700; color: #04122e; margin-bottom: 2px;">
-            ${village.name}
-          </div>
-          <div style="font-size: 11px; color: #45464d; margin-bottom: 6px;">
-            ${village.district}, ${village.state || 'Uttarakhand'}
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; background: #f2f4f7; padding: 4px 8px; border-radius: 4px; margin-bottom: 6px;">
-            <span style="font-size: 11px; font-weight: 600;">Risk Score:</span>
-            <span style="font-size: 12px; font-weight: 800; color: ${color};">${score}/100</span>
-          </div>
-          <div style="font-size: 11px; color: #45464d; display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Population:</span>
-            <span style="font-weight: 600;">${village.population ? village.population.toLocaleString() : 'N/A'}</span>
-          </div>
-          <div style="font-size: 10px; color: #45464d; background: #f2f4f7; padding: 4px; border-radius: 4px; margin-bottom: 4px; text-align: center; white-space: nowrap;">
-            Landslide: ${village.hazard_zones?.landslide === 'Red' ? '🔴' : village.hazard_zones?.landslide === 'Orange' ? '🟠' : village.hazard_zones?.landslide === 'Green' ? '🟢' : '⚪'} | 
-            Flood: ${village.hazard_zones?.flood === 'Red' ? '🔴' : village.hazard_zones?.flood === 'Orange' ? '🟠' : village.hazard_zones?.flood === 'Green' ? '🟢' : '⚪'} | 
-            Cloudburst: ${village.hazard_zones?.cloudburst === 'Red' ? '🔴' : village.hazard_zones?.cloudburst === 'Orange' ? '🟠' : village.hazard_zones?.cloudburst === 'Green' ? '🟢' : '⚪'} | 
-            Coastal Erosion: ${village.hazard_zones?.coastal_erosion === 'Red' ? '🔴' : village.hazard_zones?.coastal_erosion === 'Orange' ? '🟠' : village.hazard_zones?.coastal_erosion === 'Green' ? '🟢' : '⚪'}
-          </div>
-          ${(village.live_rainfall_mm !== undefined && village.live_rainfall_mm !== null && village.live_rainfall_mm > 0) ? `
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #0284c7; margin-bottom: 4px;">
-              <span>Live Rainfall:</span>
-              <span style="font-weight: 700;">${Number(village.live_rainfall_mm).toFixed(1)} mm</span>
+      let popupHtml = '';
+      let tooltipText = '';
+
+      if (village.is_coastal_erosion) {
+        popupHtml = `
+          <div style="font-family: 'Inter', sans-serif; min-width: 180px;">
+            <div style="font-size: 14px; font-weight: 700; color: #04122e; margin-bottom: 2px;">
+              ${village.name}
             </div>
-          ` : ''}
-          ${isFallback ? `
-            <div style="margin-top: 6px; padding: 2px 6px; background: #fef08a; border: 1px solid #fde047; border-radius: 4px; color: #854d0e; font-size: 10px; font-weight: 600; text-align: center;">
-              ⚠ Cached data
+            <div style="font-size: 11px; color: #45464d; margin-bottom: 6px;">
+              ${village.district}, ${village.state}
             </div>
-          ` : ''}
-        </div>
-      `;
+            <div style="font-size: 11px; margin-bottom: 4px;"><b>Hazard:</b> ${village.hazard_type}</div>
+            <div style="font-size: 11px; margin-bottom: 4px;"><b>Observed Area:</b> ${village.erosion_area_sq_m} sq m</div>
+            <div style="font-size: 11px; margin-bottom: 4px;"><b>Trend:</b> ${village.trend}</div>
+            <div style="font-size: 11px; margin-bottom: 4px;"><b>Live Elevation:</b> ${village.live_elevation_m !== undefined ? village.live_elevation_m + ' m' : 'Fetching...'}</div>
+            <div style="font-size: 11px; margin-bottom: 4px;"><b>Live Rainfall:</b> ${village.live_rainfall_mm !== undefined ? village.live_rainfall_mm.toFixed(1) + ' mm' : 'Fetching...'}</div>
+            <div style="font-size: 11px; margin-bottom: 4px;"><b>Source:</b> ${village.source}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ecfdf5; border: 1px solid #10b981; padding: 4px 8px; border-radius: 4px; margin-top: 6px;">
+              <span style="font-size: 10px; font-weight: 700; color: #065f46;">DYNAMIC SCORE:</span>
+              <span style="font-size: 12px; font-weight: 800; color: ${color};">${village.risk_score || '...'}</span>
+            </div>
+          </div>
+        `;
+        tooltipText = `<b>${village.name}</b> (Risk: ${village.risk_score || '...'})`;
+      } else {
+        popupHtml = `
+          <div style="font-family: 'Inter', sans-serif; min-width: 180px;">
+            <div style="font-size: 14px; font-weight: 700; color: #04122e; margin-bottom: 2px;">
+              ${village.name}
+            </div>
+            <div style="font-size: 11px; color: #45464d; margin-bottom: 6px;">
+              ${village.district}, ${village.state || 'Uttarakhand'}
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #f2f4f7; padding: 4px 8px; border-radius: 4px; margin-bottom: 6px;">
+              <span style="font-size: 11px; font-weight: 600;">Risk Score:</span>
+              <span style="font-size: 12px; font-weight: 800; color: ${color};">${score}/100</span>
+            </div>
+            <div style="font-size: 11px; color: #45464d; display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span>Population:</span>
+              <span style="font-weight: 600;">${village.population ? village.population.toLocaleString() : 'N/A'}</span>
+            </div>
+            <div style="font-size: 10px; color: #45464d; background: #f2f4f7; padding: 4px; border-radius: 4px; margin-bottom: 4px; text-align: center; white-space: nowrap;">
+              Landslide: ${village.hazard_zones?.landslide === 'Red' ? '🔴' : village.hazard_zones?.landslide === 'Orange' ? '🟠' : village.hazard_zones?.landslide === 'Green' ? '🟢' : '⚪'} | 
+              Flood: ${village.hazard_zones?.flood === 'Red' ? '🔴' : village.hazard_zones?.flood === 'Orange' ? '🟠' : village.hazard_zones?.flood === 'Green' ? '🟢' : '⚪'} | 
+              Cloudburst: ${village.hazard_zones?.cloudburst === 'Red' ? '🔴' : village.hazard_zones?.cloudburst === 'Orange' ? '🟠' : village.hazard_zones?.cloudburst === 'Green' ? '🟢' : '⚪'} | 
+              Coastal Erosion: ${village.hazard_zones?.coastal_erosion === 'Red' ? '🔴' : village.hazard_zones?.coastal_erosion === 'Orange' ? '🟠' : village.hazard_zones?.coastal_erosion === 'Green' ? '🟢' : '⚪'}
+            </div>
+            ${(village.live_rainfall_mm !== undefined && village.live_rainfall_mm !== null && village.live_rainfall_mm > 0) ? `
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #0284c7; margin-bottom: 4px;">
+                <span>Live Rainfall:</span>
+                <span style="font-weight: 700;">${Number(village.live_rainfall_mm).toFixed(1)} mm</span>
+              </div>
+            ` : ''}
+            ${isFallback ? `
+              <div style="margin-top: 6px; padding: 2px 6px; background: #fef08a; border: 1px solid #fde047; border-radius: 4px; color: #854d0e; font-size: 10px; font-weight: 600; text-align: center;">
+                ⚠ Cached data
+              </div>
+            ` : ''}
+          </div>
+        `;
+        tooltipText = `<b>${village.name}</b> (${score}/100)`;
+      }
+
       marker.bindPopup(popupHtml);
 
       // Bind hover tooltip
-      marker.bindTooltip(`<b>${village.name}</b> (${score}/100)`, {
+      marker.bindTooltip(tooltipText, {
         direction: 'top',
         offset: [0, -radius],
         opacity: 0.9,
@@ -204,7 +232,7 @@ export const MapView = ({
     const map = mapInstanceRef.current;
     if (!map || !selectedVillageId) return;
 
-    const selected = villages.find((v) => Number(v.id) === Number(selectedVillageId));
+    const selected = villages.find((v) => String(v.id) === String(selectedVillageId));
     if (selected && selected.latitude && selected.longitude) {
       map.flyTo([Number(selected.latitude), Number(selected.longitude)], 12, {
         animate: true,

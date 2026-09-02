@@ -141,15 +141,33 @@ def calculate_risk_score(
     # --- Multi-Hazard Red Zone Logic ---
     landslide_subscore = (slope_score * 0.45 + landslide_score * 0.35 + rainfall_score * 0.20) * 10.0
     flood_subscore = (flood_score * 0.55 + rainfall_score * 0.45) * 10.0
-    
+
     cloudburst_base = (rainfall_score * 0.70 + slope_score * 0.15 + road_score * 0.15) * 10.0
     cloudburst_subscore = min(cloudburst_base + (10.0 if rain_raw >= 2800 else 0.0), 100.0)
 
     coastal_erosion_subscore = min((flood_score * 0.60 + rainfall_score * 0.40) * 10.0, 100.0)
 
+    # Live Open-Meteo rain is combined with CSV slope_degrees + past_landslides
+    # so villages can shift Red / Orange / Green on Refresh.
+    if live_precipitation is not None:
+        live_boost = live_precip * 2.5
+        terrain_factor = 1.0 + max(0.0, (slope_raw - 20.0) / 50.0)
+        history_factor = 1.0 + min(landslides_raw, 8.0) * 0.12
+        landslide_live = live_boost * terrain_factor * history_factor
+        if live_precip >= 8.0 and slope_raw >= 30.0:
+            landslide_live += 12.0
+        if live_precip >= 15.0 and landslides_raw >= 3.0:
+            landslide_live += 10.0
+        landslide_subscore = min(landslide_subscore + landslide_live, 100.0)
+        flood_subscore = min(flood_subscore + live_precip * 2.0, 100.0)
+        cloudburst_subscore = min(cloudburst_subscore + live_precip * 3.0, 100.0)
+        coastal_erosion_subscore = min(coastal_erosion_subscore + live_precip * 1.2, 100.0)
+
     def get_zone(score):
-        if score >= 75.0: return "Red"
-        if score >= 50.0: return "Orange"
+        if score >= 75.0:
+            return "Red"
+        if score >= 50.0:
+            return "Orange"
         return "Green"
 
     # Static zones (baseline from CSV factors only, before live weather escalation)
@@ -170,11 +188,20 @@ def calculate_risk_score(
     cloudburst_zone = get_zone(cloudburst_subscore)
     coastal_erosion_zone = get_zone(coastal_erosion_subscore)
 
+<<<<<<< Updated upstream
     zones_shifted_by_live_weather = (
         landslide_zone != static_landslide_zone
         or flood_zone != static_flood_zone
         or cloudburst_zone != static_cloudburst_zone
     )
+=======
+    if risk_score >= 75.0:
+        dynamic_zone = "Red"
+    elif risk_score >= 50.0:
+        dynamic_zone = "Orange"
+    else:
+        dynamic_zone = "Green"
+>>>>>>> Stashed changes
 
     hazard_zones = {
         'landslide': landslide_zone,
@@ -211,6 +238,7 @@ def calculate_risk_score(
         'flood_zone': flood_zone,
         'cloudburst_zone': cloudburst_zone,
         'coastal_erosion_zone': coastal_erosion_zone,
+        'dynamic_zone': dynamic_zone,
         'composite_hazard_label': composite_hazard_label,
         'hazard_zones': hazard_zones,
         # Flat legacy keys for backward compatibility
@@ -243,7 +271,10 @@ def score_all_villages(
         v_id = v.get('id')
         precip = None
         if live_precipitations is not None and v_id is not None:
-            precip = live_precipitations.get(v_id)
+            try:
+                precip = live_precipitations.get(int(v_id), live_precipitations.get(v_id))
+            except (TypeError, ValueError):
+                precip = live_precipitations.get(v_id)
         scored_villages.append(calculate_risk_score(v, live_precipitation=precip))
 
     scored_villages.sort(key=lambda x: x['risk_score'], reverse=True)

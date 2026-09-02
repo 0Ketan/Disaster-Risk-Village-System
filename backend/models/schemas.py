@@ -47,6 +47,7 @@ class Village(BaseModel):
     weather_timestamp: Optional[str] = None
     dynamic_risk_score: Optional[float] = None
     dynamic_modifier_applied: bool = False
+    dynamic_zone: Optional[str] = None  # "Red" | "Orange" | "Green" after live rain
     relocation_precomputed: Optional[Any] = None
     _source: Optional[str] = None  # "live" | "fallback"
 

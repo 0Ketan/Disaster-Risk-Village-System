@@ -97,7 +97,11 @@ export const Navbar = ({
         {activeTimestamp && (
           <div className="hidden xl:flex items-center gap-1 text-[11px] text-primary-dim/90 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
             <Clock className="w-3 h-3 text-emerald-400" />
-            <span>Updated: {new Date(activeTimestamp).toLocaleTimeString()}</span>
+            <span>
+              {Date.now() - new Date(activeTimestamp).getTime() < 60000 
+                ? 'Last Refreshed: Just now' 
+                : `Updated: ${new Date(activeTimestamp).toLocaleTimeString()}`}
+            </span>
           </div>
         )}
 

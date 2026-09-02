@@ -1,4 +1,4 @@
-import apiClient from './client.js';
+﻿import apiClient from './client.js';
 
 // Comprehensive fallback dataset adhering to GEMINI.md resilient fallback mandate
 export const FALLBACK_VILLAGES = [
@@ -24,7 +24,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "Critical",
     priority: "Immediate",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Red', flood: 'Red', cloudburst: 'Red', coastal_erosion: 'Red' }
   },
   {
     id: 2,
@@ -48,7 +48,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "Critical",
     priority: "Immediate",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Red', flood: 'Red', cloudburst: 'Red', coastal_erosion: 'Red' }
   },
   {
     id: 3,
@@ -72,7 +72,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "Critical",
     priority: "Immediate",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Red', flood: 'Red', cloudburst: 'Red', coastal_erosion: 'Red' }
   },
   {
     id: 4,
@@ -96,7 +96,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "High",
     priority: "Short-term",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Orange', flood: 'Orange', cloudburst: 'Orange', coastal_erosion: 'Orange' }
   },
   {
     id: 5,
@@ -120,7 +120,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "Critical",
     priority: "Immediate",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Red', flood: 'Red', cloudburst: 'Red', coastal_erosion: 'Red' }
   },
   {
     id: 6,
@@ -240,7 +240,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "High",
     priority: "Short-term",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Orange', flood: 'Orange', cloudburst: 'Orange', coastal_erosion: 'Orange' }
   },
   {
     id: 11,
@@ -264,7 +264,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "Moderate",
     priority: "Medium-term",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Green', flood: 'Orange', cloudburst: 'Orange', coastal_erosion: 'Orange' }
   },
   {
     id: 12,
@@ -288,7 +288,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "High",
     priority: "Short-term",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Orange', flood: 'Orange', cloudburst: 'Orange', coastal_erosion: 'Orange' }
   },
   {
     id: 13,
@@ -312,7 +312,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "High",
     priority: "Short-term",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Orange', flood: 'Orange', cloudburst: 'Orange', coastal_erosion: 'Orange' }
   },
   {
     id: 14,
@@ -336,7 +336,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "Critical",
     priority: "Immediate",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Red', flood: 'Red', cloudburst: 'Red', coastal_erosion: 'Orange' }
   },
   {
     id: 15,
@@ -360,7 +360,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "Moderate",
     priority: "Medium-term",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Orange', coastal_erosion: 'Green' }
   },
   {
     id: 16,
@@ -384,7 +384,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "High",
     priority: "Short-term",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Orange', flood: 'Orange', cloudburst: 'Orange', coastal_erosion: 'Orange' }
   },
   {
     id: 17,
@@ -408,7 +408,7 @@ export const FALLBACK_VILLAGES = [
     risk_level: "Moderate",
     priority: "Medium-term",
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Orange', coastal_erosion: 'Green' }
   },
   {
     id: 18,
@@ -455,7 +455,7 @@ export const FALLBACK_RELOCATION_SITES = [
       distance: 85
     },
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Red', flood: 'Orange', cloudburst: 'Red', coastal_erosion: 'Green' }
   },
   {
     id: 2,
@@ -475,7 +475,7 @@ export const FALLBACK_RELOCATION_SITES = [
       distance: 75
     },
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Red', flood: 'Orange', cloudburst: 'Red', coastal_erosion: 'Green' }
   },
   {
     id: 3,
@@ -485,7 +485,7 @@ export const FALLBACK_RELOCATION_SITES = [
     total_capacity: 8000,
     available_capacity: 4600,
     overall_score: 84.5,
-    explanation: "Strategic staging area with airstrip access, gentle terrain gradient (<8°), and comprehensive multi-hazard emergency shelter infrastructure.",
+    explanation: "Strategic staging area with airstrip access, gentle terrain gradient (<8Â°), and comprehensive multi-hazard emergency shelter infrastructure.",
     score_breakdown: {
       safety: 94,
       capacity: 82,
@@ -495,7 +495,7 @@ export const FALLBACK_RELOCATION_SITES = [
       distance: 65
     },
     _source: "fallback",
-    hazard_zones: { landslide: 'Green', flood: 'Green', cloudburst: 'Green', coastal_erosion: 'Green' }
+    hazard_zones: { landslide: 'Red', flood: 'Orange', cloudburst: 'Red', coastal_erosion: 'Green' }
   }
 ];
 
@@ -746,6 +746,30 @@ export async function refreshVillages() {
       last_updated: new Date().toISOString(),
       _source: 'fallback'
     };
+  }
+}
+
+
+export async function getCoastalErosion() {
+  try {
+    const response = await apiClient.get('/api/coastal-erosion');
+    if (response.data && Array.isArray(response.data.coastal_locations)) {
+      return { locations: response.data.coastal_locations, _source: response.data._source || 'live' };
+    }
+    return { locations: [], _source: 'live' };
+  } catch (err) {
+    console.warn('Failed to fetch coastal erosion data:', err.message);
+    return { locations: [], _source: 'fallback' };
+  }
+}
+
+export async function getCoastalErosionSummary() {
+  try {
+    const response = await apiClient.get('/api/coastal-erosion/summary');
+    return response.data || null;
+  } catch (err) {
+    console.warn('Failed to fetch coastal erosion summary:', err.message);
+    return null;
   }
 }
 

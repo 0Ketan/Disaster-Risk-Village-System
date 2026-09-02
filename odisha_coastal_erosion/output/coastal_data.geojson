@@ -1,0 +1,93 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.863,
+          20.627
+        ]
+      },
+      "properties": {
+        "id": "OD_CE_001",
+        "name": "Satabhaya",
+        "district": "Kendrapara",
+        "state": "Odisha",
+        "hazard_type": "Coastal Erosion",
+        "trend": "High Erosion",
+        "erosion_area_sq_m": 4494576.08,
+        "source_risk_score": 95,
+        "data_year": 2023,
+        "source": "NCCR Report"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.786,
+          20.536
+        ]
+      },
+      "properties": {
+        "id": "OD_CE_002",
+        "name": "Pentha",
+        "district": "Kendrapara",
+        "state": "Odisha",
+        "hazard_type": "Coastal Erosion",
+        "trend": "Erosion",
+        "erosion_area_sq_m": 120500.0,
+        "source_risk_score": 85,
+        "data_year": 2023,
+        "source": "NCCR Report"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.035,
+          19.308
+        ]
+      },
+      "properties": {
+        "id": "OD_CE_003",
+        "name": "Aryapalli",
+        "district": "Ganjam",
+        "state": "Odisha",
+        "hazard_type": "Coastal Erosion",
+        "trend": "High Erosion",
+        "erosion_area_sq_m": 540000.0,
+        "source_risk_score": 92,
+        "data_year": 2023,
+        "source": "State Government Data"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          86.837,
+          20.395
+        ]
+      },
+      "properties": {
+        "id": "OD_CE_004",
+        "name": "Hukitola",
+        "district": "Kendrapara",
+        "state": "Odisha",
+        "hazard_type": "Accretion",
+        "trend": "Accretion",
+        "erosion_area_sq_m": -250000.0,
+        "source_risk_score": 20,
+        "data_year": 2023,
+        "source": "NCCR Report"
+      }
+    }
+  ]
+}

@@ -21,24 +21,35 @@ if BASE_DIR not in sys.path:
 from backend.api.health import router as health_router
 from backend.api.endpoints import router as api_router
 from backend.api.sync import router as sync_router
+from contextlib import asynccontextmanager
+
 from backend.engines.dynamic_risk_engine import (
     recalculate_all_villages_dynamic,
     refresh_dynamic_state,
     get_last_updated_time,
     load_baseline_from_csv,
     LAST_UPDATED_TIME,
+    seed_baseline_from_csv,
 )
+from backend.data_loader import villages_csv_path
 
 logger = logging.getLogger("villageshield")
 logging.basicConfig(level=logging.INFO)
 
 
 @asynccontextmanager
+<<<<<<< Updated upstream
 async def lifespan(app):
     summary = load_baseline_from_csv()
     logger.info(
         f"Startup complete: {summary['villages_loaded']} villages seeded from {summary['csv_path']}"
     )
+=======
+async def lifespan(app: FastAPI):
+    csv_path = os.path.abspath(villages_csv_path())
+    logger.info("Loading baseline villages from %s", csv_path)
+    seed_baseline_from_csv()
+>>>>>>> Stashed changes
     yield
 
 

@@ -39,8 +39,10 @@ export const Sidebar = ({
   // Filter villages by search query and risk level filter chip
   const filteredVillages = useMemo(() => {
     return villages.filter((v) => {
-      const nameMatch = v.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        v.district?.toLowerCase().includes(searchQuery.toLowerCase());
+      const q = searchQuery.toLowerCase();
+      const nameMatch = v.name?.toLowerCase().includes(q) ||
+                        v.district?.toLowerCase().includes(q) ||
+                        v.state?.toLowerCase().includes(q);
       const level = v.risk_level || getRiskLevel(v.risk_score);
       const riskMatch = selectedRiskFilter === 'All' || level.toLowerCase() === selectedRiskFilter.toLowerCase();
       return nameMatch && riskMatch;

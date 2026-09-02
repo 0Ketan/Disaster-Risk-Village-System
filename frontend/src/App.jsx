@@ -10,7 +10,8 @@ import {
   getDashboardSummary, 
   syncWeather, 
   getSyncStatus, 
-  refreshVillages 
+  refreshVillages,
+  getCoastalErosion
 } from './api/villages';
 import { getApiHealthStatus } from './api/health';
 
@@ -36,14 +37,46 @@ export const App = () => {
   // Fetch all initial data
   const fetchData = useCallback(async () => {
     try {
-      const [villagesRes, healthRes, summaryRes] = await Promise.all([
+      const [villagesRes, healthRes, summaryRes, coastalRes] = await Promise.all([
         getVillages(),
         getApiHealthStatus(),
         getDashboardSummary(),
+        getCoastalErosion()
       ]);
 
       if (villagesRes && villagesRes.villages) {
-        setVillages(villagesRes.villages);
+        let combinedVillages = [...villagesRes.villages.filter(v => !v.is_coastal_erosion)];
+        if (coastalRes && coastalRes.locations) {
+          const mappedCoastalRaw = coastalRes.locations.map(c => ({
+            ...c,
+            id: c.village_id,
+            name: c.village_name,
+            population: null,
+            risk_score: c.risk_score_suggested || 0,
+            is_coastal_erosion: true,
+            hazard_zones: { 
+              coastal_erosion: 'Green',
+              landslide: 'Green',
+              flood: 'Green',
+              cloudburst: 'Green'
+            }
+          }));
+          
+          import('./utils/riskEngine').then(async ({ calculateCoastalRisk }) => {
+            const mappedCoastal = await Promise.all(mappedCoastalRaw.map(async (c) => {
+              const liveScore = await calculateCoastalRisk(c);
+              return { ...c, ...liveScore };
+            }));
+            setVillages(prev => {
+               // Replace the raw mapped coastal with live ones in the state
+               const nonCoastal = prev.filter(v => !v.is_coastal_erosion);
+               return [...nonCoastal, ...mappedCoastal];
+            });
+          });
+          
+          combinedVillages = [...combinedVillages, ...mappedCoastalRaw];
+        }
+        setVillages(combinedVillages);
         if (villagesRes.last_updated) {
           setLastUpdated(villagesRes.last_updated);
           setLastSyncTime(villagesRes.last_updated);
@@ -109,7 +142,7 @@ export const App = () => {
       return;
     }
 
-    const localFound = villages.find((v) => Number(v.id) === Number(selectedVillageId));
+    const localFound = villages.find((v) => String(v.id) === String(selectedVillageId));
     if (localFound) {
       setSelectedVillage(localFound);
     }
@@ -118,7 +151,9 @@ export const App = () => {
     getVillageById(selectedVillageId)
       .then((res) => {
         if (isMounted && res && res.village) {
-          setSelectedVillage((prev) => ({ ...prev, ...res.village }));
+          if (String(res.village.id) === String(selectedVillageId)) {
+            setSelectedVillage((prev) => ({ ...prev, ...res.village }));
+          }
         }
       })
       .catch((err) => {
@@ -146,33 +181,66 @@ export const App = () => {
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
+      if (selectedVillageId) {
+        const village = villages.find((v) => String(v.id) === String(selectedVillageId));
+        if (village && village.is_coastal_erosion) {
+          const { fetchLiveCoastalConditions } = await import('./services/liveMarineAPI');
+          const { calculateCoastalRisk } = await import('./utils/riskEngine');
+          
+          const liveConditions = await fetchLiveCoastalConditions(village.latitude, village.longitude);
+          const liveScore = await calculateCoastalRisk(village, liveConditions);
+          
+          setVillages((prev) => prev.map((v) => String(v.id) === String(village.id) ? { ...v, ...liveScore } : v));
+          setSelectedVillage((prev) => ({ ...prev, ...liveScore }));
+          setLastUpdated(liveConditions.timestamp);
+          setLastSyncTime(liveConditions.timestamp);
+          setLiveFeedActive(true);
+          
+          setToastMessage({
+            type: 'alert',
+            text: `Live marine & weather conditions refreshed for ${village.name}`
+          });
+          setIsRefreshing(false);
+          return;
+        }
+      }
       const refreshResult = await refreshVillages();
       const timestamp = refreshResult?.last_updated || new Date().toISOString();
       setLastUpdated(timestamp);
       setLastSyncTime(timestamp);
 
-      if (refreshResult && refreshResult.status === 'success' && Array.isArray(refreshResult.villages) && refreshResult.villages.length > 0) {
-        setVillages(refreshResult.villages);
-        setLiveFeedActive(refreshResult._source === 'live_refresh' || refreshResult._source === 'live');
-        
-        // Refresh dashboard summary statistics to stay in sync
+      const villagesList = Array.isArray(refreshResult?.villages) ? refreshResult.villages : [];
+      const liveOk = refreshResult && (refreshResult.status === 'success' || refreshResult._source === 'live_refresh' || refreshResult._source === 'live');
+
+      if (villagesList.length > 0) {
+        setVillages((prev) => {
+          const coastal = prev.filter(v => v.is_coastal_erosion);
+          const newNonCoastal = villagesList.filter(v => !coastal.some(c => String(c.id) === String(v.id)));
+          return [...newNonCoastal, ...coastal];
+        });
+        setLiveFeedActive(Boolean(liveOk));
+
         getDashboardSummary().then((sumRes) => {
           if (sumRes) setSummary(sumRes);
         }).catch(console.warn);
 
-        // Show toast alert for dynamic red zone escalations
-        const dynamicRedZones = refreshResult.villages.filter(
-          (v) => (v.risk_level === 'Critical' || v.risk_score >= 81) && (v.live_rainfall_mm > 0 || v.dynamic_modifier_applied)
+        const dynamicRedZones = villagesList.filter(
+          (v) => (v.dynamic_zone === 'Red' || v.landslide_zone === 'Red' || v.risk_level === 'Critical' || v.risk_score >= 81)
+            && (Number(v.live_rainfall_mm) > 0 || v.dynamic_modifier_applied)
         );
-        if (dynamicRedZones.length > 0) {
+        if (!liveOk) {
+          setToastMessage({
+            type: 'warning',
+            text: refreshResult?.message || 'Weather API unavailable. Showing cached data.'
+          });
+        } else if (dynamicRedZones.length > 0) {
           const names = dynamicRedZones.slice(0, 3).map((v) => v.name).join(', ');
           setToastMessage({
             type: 'alert',
-            text: `Dynamic Alert: ${names}${dynamicRedZones.length > 3 ? ' and others' : ''} escalated to Red Zone.`
+            text: `Dynamic Alert: ${names}${dynamicRedZones.length > 3 ? ' and others' : ''} shifted to Red Zone after live rain.`
           });
         }
       } else {
-        // Fallback response or degraded weather service
         setLiveFeedActive(false);
         setToastMessage({
           type: 'warning',
@@ -225,6 +293,7 @@ export const App = () => {
         liveFeedActive={liveFeedActive}
         onRefresh={handleRefresh}
         isRefreshing={isRefreshing}
+        selectedVillage={selectedVillage}
       />
 
       {/* Main Content Area */}

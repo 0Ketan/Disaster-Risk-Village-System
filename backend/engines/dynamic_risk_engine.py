@@ -1,10 +1,10 @@
-import pandas as pd
 import logging
 from datetime import datetime, timezone
 import os
 
 from backend.engines.risk_engine import calculate_risk_score, score_all_villages
 from backend.engines.relocation_engine import find_best_sites
+from backend.data_loader import load_villages_csv, load_relocation_sites_csv, villages_csv_path
 from backend.services.weather_service import (
     fetch_openweathermap_weather,
     fetch_openweathermap_weather_with_metadata,
@@ -31,8 +31,33 @@ _dynamic_state = {
     'sync_in_progress': False
 }
 
+def seed_baseline_from_csv():
+    """Load data/villages.csv at process start (no weather network calls)."""
+    global _dynamic_state, LAST_UPDATED_TIME
+    villages = load_villages_csv()
+    now_iso = datetime.now(timezone.utc).isoformat()
+    scored = score_all_villages(villages) if villages else []
+    for row in scored:
+        row["rainfall_source"] = "csv_baseline"
+        row["_source"] = "baseline"
+        row["live_rainfall_mm"] = None
+    critical_count = sum(1 for v in scored if v.get("risk_level") == "Critical")
+    LAST_UPDATED_TIME = now_iso
+    _dynamic_state["villages"] = scored
+    _dynamic_state["critical_count"] = critical_count
+    _dynamic_state["last_sync_timestamp"] = now_iso
+    _dynamic_state["weather_status"] = "pending"
+    logger.info(
+        "Startup baseline ready: %s villages from %s",
+        len(scored),
+        os.path.abspath(villages_csv_path()),
+    )
+    return get_dynamic_state()
+
+
 def get_dynamic_state():
     return _dynamic_state.copy()
+
 
 def get_last_updated_time():
     global LAST_UPDATED_TIME
@@ -143,9 +168,15 @@ def recalculate_all_villages_dynamic():
     _dynamic_state['sync_in_progress'] = True
     
     try:
+<<<<<<< Updated upstream
         villages = _load_csv_records(VILLAGES_CSV_PATH, "Villages")
         relocation_sites = _load_csv_records(SITES_CSV_PATH, "Relocation sites")
 
+=======
+        villages = load_villages_csv()
+        relocation_sites = load_relocation_sites_csv()
+            
+>>>>>>> Stashed changes
         critical_count = 0
         updated_villages = []
         
@@ -201,8 +232,13 @@ def refresh_dynamic_state():
     now_iso = datetime.now(timezone.utc).isoformat()
 
     try:
+<<<<<<< Updated upstream
         villages = _load_csv_records(VILLAGES_CSV_PATH, "Villages")
         relocation_sites = _load_csv_records(SITES_CSV_PATH, "Relocation sites")
+=======
+        villages = load_villages_csv()
+        relocation_sites = load_relocation_sites_csv()
+>>>>>>> Stashed changes
 
         if not villages:
             LAST_UPDATED_TIME = now_iso
@@ -238,25 +274,26 @@ def refresh_dynamic_state():
             logger.error(f"fetch_live_weather_with_metadata failed ({weather_err}). Falling back to baseline.", exc_info=True)
             fetch_succeeded = False
             fetch_status = "fallback"
-            weather_map = {v.get("id"): 0.0 for v in villages if v.get("id") is not None}
-            village_sources = {v.get("id"): "fallback_cache" for v in villages if v.get("id") is not None}
+            weather_map = {int(v["id"]): 0.0 for v in villages if v.get("id") is not None}
+            village_sources = {int(v["id"]): "fallback_cache" for v in villages if v.get("id") is not None}
 
         # Step 2 & 3: Recalculate dynamic risk scores
         updated_villages = []
         critical_count = 0
 
         for village in villages:
-            v_id = village.get('id')
+            v_id = int(village["id"]) if village.get("id") is not None else None
             lat = village.get('latitude', 0.0)
             lon = village.get('longitude', 0.0)
 
-            precip = float(weather_map.get(v_id, 0.0)) if (v_id is not None and v_id in weather_map) else 0.0
+            precip = 0.0
+            if v_id is not None:
+                precip = float(weather_map.get(v_id, weather_map.get(village.get("id"), 0.0)))
             elevation_m, elev_source = get_cached_elevation(lat, lon)
 
-            # Use calculate_risk_score with live_precipitation modifier
+            # Combine live precip with CSV slope_degrees / past_landslides via calculate_risk_score
             scored = calculate_risk_score(village, live_precipitation=precip)
 
-            # Determine village-level source
             v_src = village_sources.get(v_id, "OpenMeteo" if fetch_succeeded else "fallback_cache")
 
             # Enrich with additional schema fields
@@ -284,6 +321,7 @@ def refresh_dynamic_state():
         _dynamic_state['critical_count'] = critical_count
         _dynamic_state['last_sync_timestamp'] = now_iso
         _dynamic_state['last_updated_time'] = now_iso
+        _dynamic_state['weather_status'] = 'available' if fetch_succeeded else 'unavailable'
         LAST_UPDATED_TIME = now_iso
 
         if fetch_succeeded:

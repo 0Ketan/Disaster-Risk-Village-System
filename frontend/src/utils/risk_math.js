@@ -21,10 +21,10 @@
 
 export const getRiskColor = (score) => {
   const numericScore = Number(score) || 0;
-  if (numericScore >= 81) return "#e74c3c"; // Critical: Red (81-100)
-  if (numericScore >= 61) return "#e67e22"; // High: Orange (61-80)
-  if (numericScore >= 31) return "#f39c12"; // Moderate: Yellow (31-60)
-  return "#27ae60";                         // Low: Green (0-30)
+  if (numericScore >= 81) return "#EF4444"; // Critical: Red (81-100)
+  if (numericScore >= 61) return "#F97316"; // High: Orange (61-80)
+  if (numericScore >= 31) return "#EAB308"; // Moderate: Yellow (31-60)
+  return "#22C55E";                         // Low: Green (0-30)
 };
 
 export const getRiskLevel = (score) => {

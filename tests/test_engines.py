@@ -72,6 +72,38 @@ def test_composite_score_unchanged():
         'flood_risk_index': 8,
         'road_access_score': 3
     }
-    scored = calculate_risk_score(village)
-    assert isinstance(scored['risk_score'], float)
-    assert scored['risk_score'] > 0
+def test_live_precip_shifts_landslide_zone_with_slope_and_history():
+    """Live rain plus steep slope and landslide history should escalate Red/Orange/Green."""
+    village = {
+        'id': 11,
+        'name': 'Syalsaur',
+        'slope_degrees': 20,
+        'annual_rainfall_mm': 2100,
+        'past_landslides': 1,
+        'flood_risk_index': 5,
+        'road_access_score': 6,
+    }
+    baseline = calculate_risk_score(village)
+    wet = calculate_risk_score(village, live_precipitation=20.0)
+
+    assert baseline['landslide_zone'] == 'Green'
+    assert wet['live_precipitation_mm'] == 20.0
+    assert wet['dynamic_modifier_applied'] is True
+    assert wet['landslide_subscore'] > baseline['landslide_subscore']
+    assert wet['dynamic_zone'] in ('Red', 'Orange', 'Green')
+    assert wet['risk_score'] > baseline['risk_score']
+    assert wet['landslide_zone'] in ('Orange', 'Red')
+
+
+def test_baseline_csv_loader_uses_exact_villages_file():
+    from backend.data_loader import load_villages_csv, villages_csv_path
+    import os
+    path = villages_csv_path()
+    assert path.endswith(os.path.join('data', 'villages.csv'))
+    villages = load_villages_csv()
+    assert len(villages) >= 40
+    first = villages[0]
+    assert first['name'] == 'Ukhimath'
+    assert isinstance(first['id'], int)
+    assert 'latitude' in first and 'longitude' in first
+    assert 'slope_degrees' in first and 'past_landslides' in first

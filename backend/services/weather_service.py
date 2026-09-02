@@ -16,6 +16,41 @@ logger = logging.getLogger("villageshield.weather_service")
 
 OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast"
 DEFAULT_TIMEOUT_SECONDS = 3.0
+OPEN_METEO_QUERY = "current=precipitation,rain&daily=precipitation_sum&forecast_days=1&timezone=auto"
+
+
+def _village_id(village: Dict[str, Any]) -> Optional[int]:
+    try:
+        v_id = village.get("id")
+        return int(v_id) if v_id is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_precip_mm(data: Any, fallback: float = 0.0) -> float:
+    """Prefer today's daily precipitation_sum (mm), else current hourly rate."""
+    if not isinstance(data, dict):
+        return float(fallback)
+    daily = data.get("daily") or {}
+    daily_sums = daily.get("precipitation_sum") if isinstance(daily, dict) else None
+    daily_val = None
+    if isinstance(daily_sums, list) and daily_sums:
+        try:
+            daily_val = float(daily_sums[-1]) if daily_sums[-1] is not None else None
+        except (TypeError, ValueError):
+            daily_val = None
+    current = data.get("current") or {}
+    current_raw = None
+    if isinstance(current, dict):
+        current_raw = current.get("precipitation", current.get("rain", 0.0))
+    try:
+        current_val = float(current_raw) if current_raw is not None else 0.0
+    except (TypeError, ValueError):
+        current_val = 0.0
+    if daily_val is not None:
+        return max(0.0, max(daily_val, current_val))
+    return max(0.0, current_val)
+
 
 
 def fetch_live_weather_for_village(
@@ -48,18 +83,13 @@ def fetch_live_weather_for_village(
         }
 
     try:
-        url = f"{OPEN_METEO_BASE_URL}?latitude={lat}&longitude={lon}&current=precipitation,rain"
+        url = f"{OPEN_METEO_BASE_URL}?latitude={lat}&longitude={lon}&{OPEN_METEO_QUERY}"
         response = httpx.get(url, timeout=DEFAULT_TIMEOUT_SECONDS)
         
         if response.status_code == 200:
             try:
                 data = response.json()
-                current = data.get("current", {}) if isinstance(data, dict) else {}
-                precipitation = current.get("precipitation", current.get("rain", 0.0))
-                try:
-                    rainfall_val = float(precipitation) if precipitation is not None else float(fallback_precip)
-                except (ValueError, TypeError):
-                    rainfall_val = float(fallback_precip)
+                rainfall_val = _extract_precip_mm(data, fallback_precip)
 
                 return {
                     "live_rainfall_mm": max(0.0, rainfall_val),
@@ -130,14 +160,14 @@ def fetch_live_weather_with_metadata(villages: List[Dict[str, Any]]) -> Dict[str
 
     for v in villages:
         if isinstance(v, dict):
-            v_id = v.get("id")
+            v_id = _village_id(v)
             if v_id is not None:
                 weather_map[v_id] = 0.0
                 village_sources[v_id] = "fallback_cache"
 
     valid_villages = [
         v for v in villages
-        if isinstance(v, dict) and v.get("id") is not None and v.get("latitude") is not None and v.get("longitude") is not None
+        if isinstance(v, dict) and _village_id(v) is not None and v.get("latitude") is not None and v.get("longitude") is not None
     ]
 
     if not valid_villages:
@@ -153,7 +183,7 @@ def fetch_live_weather_with_metadata(villages: List[Dict[str, Any]]) -> Dict[str
     try:
         lats_str = ",".join(str(v["latitude"]) for v in valid_villages)
         lons_str = ",".join(str(v["longitude"]) for v in valid_villages)
-        url = f"{OPEN_METEO_BASE_URL}?latitude={lats_str}&longitude={lons_str}&current=precipitation,rain"
+        url = f"{OPEN_METEO_BASE_URL}?latitude={lats_str}&longitude={lons_str}&{OPEN_METEO_QUERY}"
 
         response = httpx.get(url, timeout=DEFAULT_TIMEOUT_SECONDS)
         if response.status_code == 200:
@@ -161,27 +191,17 @@ def fetch_live_weather_with_metadata(villages: List[Dict[str, Any]]) -> Dict[str
                 data = response.json()
                 if isinstance(data, list) and len(data) == len(valid_villages):
                     for village, loc_data in zip(valid_villages, data):
-                        v_id = village.get("id")
+                        v_id = _village_id(village)
                         if v_id is not None:
-                            curr = loc_data.get("current", {}) if isinstance(loc_data, dict) else {}
-                            precip = curr.get("precipitation", curr.get("rain", 0.0))
-                            try:
-                                val = float(precip) if precip is not None else 0.0
-                            except (ValueError, TypeError):
-                                val = 0.0
-                            weather_map[v_id] = max(0.0, val)
+                            val = _extract_precip_mm(loc_data, 0.0)
+                            weather_map[v_id] = val
                             village_sources[v_id] = "OpenMeteo"
                     batch_succeeded = True
                 elif isinstance(data, dict) and len(valid_villages) == 1:
-                    v_id = valid_villages[0].get("id")
+                    v_id = _village_id(valid_villages[0])
                     if v_id is not None:
-                        curr = data.get("current", {})
-                        precip = curr.get("precipitation", curr.get("rain", 0.0))
-                        try:
-                            val = float(precip) if precip is not None else 0.0
-                        except (ValueError, TypeError):
-                            val = 0.0
-                        weather_map[v_id] = max(0.0, val)
+                        val = _extract_precip_mm(data, 0.0)
+                        weather_map[v_id] = val
                         village_sources[v_id] = "OpenMeteo"
                     batch_succeeded = True
                 else:
@@ -219,30 +239,22 @@ def fetch_live_weather_with_metadata(villages: List[Dict[str, Any]]) -> Dict[str
     try:
         with httpx.Client(timeout=DEFAULT_TIMEOUT_SECONDS) as client:
             for village in valid_villages:
-                v_id = village.get("id")
+                v_id = _village_id(village)
                 if v_id is None:
                     continue
 
                 lat = village.get("latitude")
                 lon = village.get("longitude")
                 try:
-                    url = f"{OPEN_METEO_BASE_URL}?latitude={lat}&longitude={lon}&current=precipitation,rain"
+                    url = f"{OPEN_METEO_BASE_URL}?latitude={lat}&longitude={lon}&{OPEN_METEO_QUERY}"
                     resp = client.get(url)
                     if resp.status_code == 200:
                         item_data = resp.json()
-                        curr = item_data.get("current", {}) if isinstance(item_data, dict) else {}
-                        precip = curr.get("precipitation", curr.get("rain", 0.0))
-                        if precip is not None:
-                            try:
-                                val = float(precip)
-                                weather_map[v_id] = max(0.0, val)
-                                village_sources[v_id] = "OpenMeteo"
-                                success_count += 1
-                                continue
-                            except (ValueError, TypeError) as val_err:
-                                logger.error(f"Open-Meteo value parsing error for village {v_id}: {val_err}")
-                        else:
-                            logger.error(f"Open-Meteo missing precipitation in payload for village {v_id}: {item_data}")
+                        val = _extract_precip_mm(item_data, 0.0)
+                        weather_map[v_id] = val
+                        village_sources[v_id] = "OpenMeteo"
+                        success_count += 1
+                        continue
                     else:
                         logger.error(f"Open-Meteo API returned error status {resp.status_code}: {resp.text}")
                     weather_map[v_id] = 0.0
@@ -364,7 +376,7 @@ def enrich_villages_with_weather(
         if not isinstance(v, dict):
             continue
         item = v.copy()
-        v_id = item.get("id")
+        v_id = _village_id(item)
         precip = weather_map.get(v_id, 0.0) if (v_id is not None and weather_map is not None) else 0.0
         item["live_precipitation"] = precip
         item["live_rainfall_mm"] = precip

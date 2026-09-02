@@ -27,6 +27,14 @@ export const FALLBACK_HEALTH_DATA = {
       mode: 'live',
       latency_ms: 240,
       message: 'Historical baseline ready'
+    },
+    {
+      service: 'OpenMeteoMarine',
+      name: 'Open-Meteo Marine (Wave & Swell)',
+      status: 'healthy',
+      mode: 'live',
+      latency_ms: 150,
+      message: 'Live ocean data stream active'
     }
   ],
   _source: 'fallback'
@@ -61,7 +69,8 @@ export async function getApiHealthStatus() {
           const nameMap = {
             opentopodata: 'OpenTopoData (Elevation)',
             openweathermap: 'OpenWeatherMap (Precipitation)',
-            meteostat: 'Meteostat (Climate History)'
+            meteostat: 'Meteostat (Climate History)',
+            openmeteomarine: 'Open-Meteo Marine (Wave & Swell)'
           };
           return {
             service: key,
