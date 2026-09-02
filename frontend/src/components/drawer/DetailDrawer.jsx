@@ -7,7 +7,6 @@ import HazardZoneBadges from './HazardZoneBadges';
 import WarningBadge from '../common/WarningBadge';
 import { getRelocationSites } from '../../api/villages';
 
-<<<<<<< Updated upstream
 /**
  * Slide-out Detail Drawer (440px width)
  * Opens upon village selection on the map or sidebar.
@@ -21,6 +20,8 @@ export const DetailDrawer = ({
   const [relocationData, setRelocationData] = useState(null);
   const [isLoadingRelocation, setIsLoadingRelocation] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [marineView, setMarineView] = useState('current');
+
   const handleDispatch = (site) => {
     const villageName = village?.name || 'Village';
     const pop = village?.population || 0;
@@ -31,12 +32,6 @@ export const DetailDrawer = ({
     // optional callback to parent
     if (onDispatchOrder) onDispatchOrder(village, site);
   };
-=======
-export const DetailDrawer = ({ village, onClose }) => {
-  const [relocationData, setRelocationData] = useState(null);
-  const [isLoadingRelocation, setIsLoadingRelocation] = useState(false);
-  const [marineView, setMarineView] = useState('current'); // 'current' | 'forecast'
->>>>>>> Stashed changes
 
   const riskScore = Number(village?.risk_score) || 0;
   const needsRelocation = riskScore >= 70;

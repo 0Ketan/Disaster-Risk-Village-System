@@ -85,7 +85,7 @@ def load_baseline_from_csv():
     """
     global _dynamic_state, LAST_UPDATED_TIME
 
-    villages = _load_csv_records(VILLAGES_CSV_PATH, "Villages")
+    villages = load_villages_csv()
     scored = score_all_villages(villages)
     for v in scored:
         v['rainfall_source'] = 'baseline_csv'
@@ -168,15 +168,8 @@ def recalculate_all_villages_dynamic():
     _dynamic_state['sync_in_progress'] = True
     
     try:
-<<<<<<< Updated upstream
-        villages = _load_csv_records(VILLAGES_CSV_PATH, "Villages")
-        relocation_sites = _load_csv_records(SITES_CSV_PATH, "Relocation sites")
-
-=======
         villages = load_villages_csv()
         relocation_sites = load_relocation_sites_csv()
-            
->>>>>>> Stashed changes
         critical_count = 0
         updated_villages = []
         
@@ -232,13 +225,8 @@ def refresh_dynamic_state():
     now_iso = datetime.now(timezone.utc).isoformat()
 
     try:
-<<<<<<< Updated upstream
-        villages = _load_csv_records(VILLAGES_CSV_PATH, "Villages")
-        relocation_sites = _load_csv_records(SITES_CSV_PATH, "Relocation sites")
-=======
         villages = load_villages_csv()
         relocation_sites = load_relocation_sites_csv()
->>>>>>> Stashed changes
 
         if not villages:
             LAST_UPDATED_TIME = now_iso

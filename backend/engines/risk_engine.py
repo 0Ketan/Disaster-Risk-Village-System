@@ -188,20 +188,18 @@ def calculate_risk_score(
     cloudburst_zone = get_zone(cloudburst_subscore)
     coastal_erosion_zone = get_zone(coastal_erosion_subscore)
 
-<<<<<<< Updated upstream
     zones_shifted_by_live_weather = (
         landslide_zone != static_landslide_zone
         or flood_zone != static_flood_zone
         or cloudburst_zone != static_cloudburst_zone
     )
-=======
+    
     if risk_score >= 75.0:
         dynamic_zone = "Red"
     elif risk_score >= 50.0:
         dynamic_zone = "Orange"
     else:
         dynamic_zone = "Green"
->>>>>>> Stashed changes
 
     hazard_zones = {
         'landslide': landslide_zone,

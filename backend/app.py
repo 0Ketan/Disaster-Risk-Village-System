@@ -38,18 +38,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 @asynccontextmanager
-<<<<<<< Updated upstream
-async def lifespan(app):
+async def lifespan(app: FastAPI):
     summary = load_baseline_from_csv()
     logger.info(
         f"Startup complete: {summary['villages_loaded']} villages seeded from {summary['csv_path']}"
     )
-=======
-async def lifespan(app: FastAPI):
-    csv_path = os.path.abspath(villages_csv_path())
-    logger.info("Loading baseline villages from %s", csv_path)
-    seed_baseline_from_csv()
->>>>>>> Stashed changes
     yield
 
 
