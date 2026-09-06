@@ -16,7 +16,9 @@ import { getRelocationSites } from '../../api/villages';
 export const DetailDrawer = ({
   village,
   onClose,
-  onDispatchOrder
+  onDispatchOrder,
+  simulationData,
+  osrmRoutes
 }) => {
   console.log("Sidebar rendering village:", village?.name);
   const [relocationData, setRelocationData] = useState(null);
@@ -97,7 +99,7 @@ export const DetailDrawer = ({
       </div>
 
       {/* Provenance Warning Banner if village is from fallback/cached data */}
-      {isFallback && (
+      {isFallback && !simulationData && (
         <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 flex items-center justify-between">
           <WarningBadge text="⚠ Cached data in use" size="sm" />
           <span className="text-[10px] text-amber-800">External services offline</span>
@@ -106,14 +108,87 @@ export const DetailDrawer = ({
 
       {/* Drawer Content Body (Scrollable) */}
       <div className="flex-1 overflow-y-auto p-4 space-y-5">
-        {/* Risk Gauge Section */}
-        <section>
-          <RiskGauge score={riskScore} />
-        </section>
+        {simulationData && village.name === 'Rajnagar' ? (
+          <div className="space-y-6">
+            <section>
+              <RiskGauge score={85} />
+            </section>
+            
+            <section className="grid grid-cols-2 gap-2.5">
+              <div className="p-3 rounded-lg bg-surface border border-outline-variant/50">
+                <div className="text-[10px] font-bold uppercase text-on-surface-variant mb-0.5">
+                  Population
+                </div>
+                <div className="text-base font-extrabold text-on-surface flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span>{village.population ? village.population.toLocaleString() : '1,240'}</span>
+                </div>
+              </div>
 
-        {/* Hazard Zone Classification */}
+              <div className="p-3 rounded-lg bg-surface border border-outline-variant/50">
+                <div className="text-[10px] font-bold uppercase text-on-surface-variant mb-0.5">
+                  Evacuation Priority
+                </div>
+                <div className="text-base font-extrabold flex items-center gap-1.5 text-rose-600">
+                  <AlertOctagon className="w-4 h-4" />
+                  <span>Immediate</span>
+                </div>
+              </div>
+            </section>
+
+            <section className="border-t border-outline-variant pt-4">
+              <h3 className="text-sm font-extrabold text-on-surface mb-2 tracking-wide text-center">── RELOCATION PLAN (Pre-computed) ──</h3>
+              <p className="text-xs text-on-surface-variant mb-3">Population split via K-Means clustering:</p>
+              <ul className="space-y-2 text-sm text-on-surface">
+                {simulationData.relocation_sites.map((site, index) => {
+                  let distance = `${site.distance_km}km`;
+                  if (osrmRoutes) {
+                    const osrmRouteData = index === 0 ? osrmRoutes.route1 : osrmRoutes.route2;
+                    if (osrmRouteData && osrmRouteData.success) {
+                      distance = `${osrmRouteData.distance_km}km (est. ${osrmRouteData.duration_min} min)`;
+                    }
+                  }
+                  return (
+                    <li key={site.name} className="flex gap-2">
+                      <span className="text-rose-500">•</span>
+                      <span>{site.assigned_population} people → {site.name} ({distance}, Elev: {site.elevation_m}m)</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+
+            <section className="border-t border-outline-variant pt-4">
+              <h3 className="text-sm font-extrabold text-on-surface mb-3 tracking-wide text-center">── FLOOD CONDITIONS ──</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between"><span className="text-on-surface-variant">Live Rainfall:</span> <b>{simulationData.live_rainfall_mm}mm</b></div>
+                <div className="flex justify-between"><span className="text-on-surface-variant">24hr Forecast:</span> <b>{simulationData.next_24hr_rainfall_mm}mm</b></div>
+                <div className="flex justify-between"><span className="text-on-surface-variant">River Gauge:</span> <b className="text-red-600">{simulationData.flood_gauge_status}</b></div>
+                <div className="flex justify-between"><span className="text-on-surface-variant">Elevation:</span> <b>{simulationData.elevation_m}m (sea level — extreme flood risk)</b></div>
+              </div>
+            </section>
+
+            <section className="border-t border-outline-variant pt-4">
+              <h3 className="text-sm font-extrabold text-on-surface mb-3 tracking-wide text-center">── SMS ALERT SENT ──</h3>
+              <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl shadow-inner text-sm text-amber-900">
+                <div className="font-serif mb-2 leading-relaxed text-[13px]">{simulationData.alert_sms_preview.message}</div>
+                <hr className="border-amber-200 mb-2" />
+                <div className="italic text-xs opacity-90">{simulationData.alert_sms_preview.english_translation}</div>
+              </div>
+            </section>
+          </div>
+        ) : (
+          <>
+            {/* Risk Gauge Section */}
+            <section>
+              <RiskGauge score={riskScore} />
+            </section>
+
+        {/* Hazard Zone Classification (Hidden for Flood module to prevent legacy data contradiction) */}
         <section>
-          <HazardZoneBadges village={village} />
+          {!(village.hazard_type === 'flood' || ['OD_KEN_001', 'OD_JAG_001', 'OD_PUR_001'].includes(String(village.id))) && (
+            <HazardZoneBadges village={village} />
+          )}
         </section>
 
         {/* Priority & Quick Stats Grid */}
@@ -204,6 +279,8 @@ export const DetailDrawer = ({
             </div>
           )}
         </section>
+        </>
+        )}
       </div>
     </aside>
   );

@@ -603,7 +603,7 @@ export async function getDashboardSummary() {
         total_population_at_risk: popAtRisk,
         relocations_needed_count: list.filter(v => v.risk_score >= 70).length,
         risk_distribution: { critical, high, moderate, low },
-        api_health: { opentopodata: "live", openweathermap: "live", meteostat: "live" },
+        api_health: { opentopodata: "live", openmeteo: "live", meteostat: "live" },
         _source: 'live'
       };
     }
@@ -622,7 +622,7 @@ export async function getDashboardSummary() {
       total_population_at_risk: totalPop,
       relocations_needed_count: FALLBACK_VILLAGES.filter(v => v.risk_score >= 70).length,
       risk_distribution: { critical, high, moderate, low },
-      api_health: { opentopodata: "fallback", openweathermap: "fallback", meteostat: "fallback" },
+      api_health: { opentopodata: "fallback", openmeteo: "fallback", meteostat: "fallback" },
       _source: 'fallback'
     };
   }

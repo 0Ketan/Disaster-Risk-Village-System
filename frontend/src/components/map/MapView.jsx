@@ -21,7 +21,9 @@ L.Icon.Default.mergeOptions({
 export const MapView = ({ 
   villages = [], 
   selectedVillageId, 
-  onVillageSelect 
+  onVillageSelect,
+  simulationData,
+  osrmRoutes
 }) => {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -126,21 +128,17 @@ export const MapView = ({
       const priorityScore = mlData ? mlData.Relocation_Priority_Score : 'N/A';
       const zoneCategory = mlData ? mlData.Zone_Category : 'N/A';
 
-      const score = Math.round(village.risk_score || 0);
-      const level = village.risk_level || getRiskLevel(score);
-      const radius = getMarkerRadius(village.population);
-      const baseColor = getRiskColor(score);
+      let score = Math.round(village.risk_score || 0);
+      let level = village.risk_level || getRiskLevel(score);
+      let color = getRiskColor(score);
       
-      let color = baseColor;
-      if (floodData) {
-        if (floodData.risk_level === 'CRITICAL') color = '#ef4444';
-        else if (floodData.risk_level === 'HIGH') color = '#f97316';
-        else if (floodData.risk_level === 'MODERATE') color = '#eab308';
-        else color = '#22c55e';
-      } else if (mlData) {
-        color = isRedZone ? '#ef4444' : '#22c55e';
+      if (simulationData && village.name === 'Rajnagar') {
+        score = 85;
+        level = 'Critical';
+        color = getRiskColor(score);
       }
 
+      const radius = getMarkerRadius(village.population);
       const isFallback = village._source === 'fallback';
 
       // Create CircleMarker
@@ -212,11 +210,135 @@ export const MapView = ({
           opacity: 0.6,
           fillOpacity: 0.2,
           dashArray: '3, 6',
+          className: (simulationData && village.name === 'Rajnagar') ? 'animate-pulse' : '',
         }).addTo(map);
         selectedHaloRef.current = halo;
       }
     });
-  }, [filteredVillages, selectedVillageId, onVillageSelect, mlPriorityData, floodRiskData]);
+
+    // --- Add simulation visuals if simulationData is active ---
+    if (simulationData) {
+      const campIcon = L.divIcon({
+        className: '',
+        html: `
+          <div style="
+            background: #16a34a;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            font-size: 18px;
+          ">⛺</div>
+        `,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        popupAnchor: [0, -20]
+      });
+
+      const dangerIcon = L.divIcon({
+        className: '',
+        html: `
+          <div style="
+            background: #f97316;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            font-size: 14px;
+          ">⚠️</div>
+        `,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -16]
+      });
+
+      // Inject custom tooltip CSS once
+      if (!document.getElementById('camp-tooltip-css')) {
+        const style = document.createElement('style');
+        style.id = 'camp-tooltip-css';
+        style.innerHTML = `
+          .camp-label-tooltip {
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+          }
+          .camp-label-tooltip::before {
+            display: none;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      // Create new camps
+      simulationData.relocation_sites.forEach(site => {
+        const campMarker = L.marker([site.latitude, site.longitude], { icon: campIcon });
+        campMarker.bindPopup(`
+          <div style="font-family: 'Inter', sans-serif; min-width: 180px;">
+            <div style="font-size: 14px; font-weight: 700; color: #04122e; margin-bottom: 2px;">
+              ${site.name}
+            </div>
+            <div style="font-size: 11px; color: #45464d;">
+              Elevation: ${site.elevation_m}m | Capacity: ${site.capacity} | Assigned: ${site.assigned_population} people<br/>
+              Suitability Score: ${site.suitability_score}/100
+            </div>
+          </div>
+        `);
+        campMarker.bindTooltip(site.name, {
+          permanent: true,
+          direction: 'bottom',
+          className: 'camp-label-tooltip',
+          offset: [0, 10]
+        });
+        campMarker.addTo(markersLayer);
+      });
+
+      // Draw routes and danger zones
+      simulationData.evacuation_routes.forEach((route, index) => {
+        if (route.osrm_waypoints && route.osrm_waypoints.length > 0) {
+          const fallbackWaypoints = route.osrm_waypoints;
+          let coordinates = fallbackWaypoints;
+          let tooltipMsg = "Evacuation route (fallback)";
+
+          if (osrmRoutes) {
+            const osrmRouteData = index === 0 ? osrmRoutes.route1 : osrmRoutes.route2;
+            if (osrmRouteData && osrmRouteData.success && osrmRouteData.coordinates) {
+              coordinates = osrmRouteData.coordinates;
+              tooltipMsg = `Evacuation route via OSRM (${osrmRouteData.distance_km} km, ${osrmRouteData.duration_min} min)`;
+            }
+          }
+
+          const polyline = L.polyline(coordinates, {
+            color: '#0066FF',
+            weight: 4,
+            opacity: 0.85,
+            dashArray: null
+          });
+          polyline.bindTooltip(tooltipMsg, { direction: 'center', sticky: true });
+          polyline.addTo(markersLayer);
+        }
+
+        route.danger_zones.forEach(dz => {
+          const dzMarker = L.marker([dz.latitude, dz.longitude], { icon: dangerIcon });
+          dzMarker.bindPopup(`<b>⚠️ Danger Zone</b><br>${dz.label}<br><small>Exercise caution on this route segment</small>`);
+          dzMarker.addTo(markersLayer);
+        });
+      });
+    }
+  }, [filteredVillages, selectedVillageId, onVillageSelect, mlPriorityData, floodRiskData, simulationData, osrmRoutes]);
 
   // Handle map container resizing (fixes the black bar when sidebar slides)
   useEffect(() => {

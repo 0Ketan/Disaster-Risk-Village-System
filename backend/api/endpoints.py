@@ -358,3 +358,87 @@ def get_flood_dashboard():
             results.append(dict(row))
     conn.close()
     return {"status": "success", "data": results}
+
+
+@router.get("/simulate/disaster")
+def simulate_disaster(village_id: str = Query(..., description="Village ID to simulate")):
+    if village_id.lower() != "rajnagar":
+        raise HTTPException(status_code=400, detail="Only rajnagar simulation is available.")
+
+    return {
+      "village_id": "rajnagar",
+      "name": "Rajnagar",
+      "district": "Kendrapara, Odisha",
+      "latitude": 20.7010,
+      "longitude": 86.8780,
+      "population": 1240,
+      "risk_score": 85.0,
+      "base_risk_score": 85.0,
+      "risk_level": "Critical",
+      "priority": "Immediate",
+      "relocation_required": True,
+      "flood_gauge_status": "EMERGENCY",
+      "live_rainfall_mm": 47.3,
+      "today_rainfall_mm": 47.3,
+      "next_24hr_rainfall_mm": 62.1,
+      "elevation_m": 0.0,
+      "simulation_mode": True,
+      "simulation_label": "Simulated flood event — pre-computed for demonstration",
+      "relocation_sites": [
+        {
+          "name": "Camp A — Pattamundai Relief Ground",
+          "latitude": 20.6250,
+          "longitude": 86.7450,
+          "elevation_m": 12.0,
+          "capacity": 700,
+          "assigned_population": 700,
+          "cluster_id": 1,
+          "distance_km": 55.1,
+          "suitability_score": 91.0
+        },
+        {
+          "name": "Camp B — Rajkanika Safe Zone",
+          "latitude": 20.6650,
+          "longitude": 86.8050,
+          "elevation_m": 15.0,
+          "capacity": 600,
+          "assigned_population": 540,
+          "cluster_id": 2,
+          "distance_km": 32.0,
+          "suitability_score": 87.0
+        }
+      ],
+      "evacuation_routes": [
+        {
+          "from_village": "Rajnagar",
+          "to_site": "Camp A — Pattamundai Relief Ground",
+          "osrm_waypoints": [
+            [20.7010, 86.8780],
+            [20.6800, 86.8200],
+            [20.6250, 86.7450]
+          ],
+          "danger_zones": [
+            {
+              "label": "Low elevation flood risk stretch",
+              "latitude": 20.6900,
+              "longitude": 86.8500
+            }
+          ]
+        },
+        {
+          "from_village": "Rajnagar",
+          "to_site": "Camp B — Rajkanika Safe Zone",
+          "osrm_waypoints": [
+            [20.7010, 86.8780],
+            [20.6850, 86.8400],
+            [20.6650, 86.8050]
+          ],
+          "danger_zones": []
+        }
+      ],
+      "alert_sms_preview": {
+        "language": "Odia",
+        "message": "⚠️ ବିପଦ ସଙ୍କେତ: ରାଜନଗର ବନ୍ୟା ବିପଦ ସ୍ତର CRITICAL। ଅବିଳମ୍ବେ ସ୍ଥାନାନ୍ତର କରନ୍ତୁ। Camp A (ପଟ୍ଟାମୁଣ୍ଡଇ): 55.1km। Camp B (ରାଜକନିକା): 32.0km।",
+        "english_translation": "⚠️ DANGER ALERT: Rajnagar flood risk CRITICAL. Evacuate immediately via SH9A. Camp A (Pattamundai): 55.1km — 98 min. Camp B (Rajkanika): 32.0km — 63 min."
+      }
+    }

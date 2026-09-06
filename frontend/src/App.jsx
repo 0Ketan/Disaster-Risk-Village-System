@@ -18,6 +18,52 @@ import { getApiHealthStatus } from './api/health';
  * Main Application Shell (VillageShield)
  * Unified state orchestration between Map, Sidebar, Detail Drawer, and Dashboard.
  */
+async function fetchOSRMRoute(startLat, startLon, endLat, endLon) {
+  const url = `http://router.project-osrm.org/route/v1/driving/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`;
+  
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(8000) // 8 second timeout
+    });
+    
+    if (!response.ok) {
+      throw new Error(`OSRM responded with status ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (
+      data.code !== 'Ok' ||
+      !data.routes ||
+      data.routes.length === 0 ||
+      !data.routes[0].geometry ||
+      !data.routes[0].geometry.coordinates
+    ) {
+      throw new Error('OSRM returned no valid route');
+    }
+    
+    // OSRM returns [longitude, latitude] — Leaflet needs [latitude, longitude]
+    const coordinates = data.routes[0].geometry.coordinates.map(
+      ([lon, lat]) => [lat, lon]
+    );
+    
+    return {
+      success: true,
+      coordinates: coordinates,
+      distance_km: (data.routes[0].distance / 1000).toFixed(1),
+      duration_min: Math.round(data.routes[0].duration / 60)
+    };
+    
+  } catch (error) {
+    console.warn(`OSRM fetch failed: ${error.message}. Using fallback waypoints.`);
+    return {
+      success: false,
+      coordinates: null,
+      error: error.message
+    };
+  }
+}
+
 export const App = () => {
   const [activeView, setActiveView] = useState('map'); // 'map' | 'dashboard'
   const [villages, setVillages] = useState([]);
@@ -32,6 +78,44 @@ export const App = () => {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [liveFeedActive, setLiveFeedActive] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  
+  // --- Simulation State ---
+  const [simulationData, setSimulationData] = useState(null);
+  const [osrmRoutes, setOsrmRoutes] = useState(null);
+  const [routesLoading, setRoutesLoading] = useState(false);
+
+  const handleSimulate = async () => {
+    try {
+      const response = await fetch('/api/simulate/disaster?village_id=rajnagar');
+      const data = await response.json();
+      setSimulationData(data);
+      setSelectedVillageId('OD_KEN_001'); // Select Rajnagar
+      setOsrmRoutes(null);
+      setRoutesLoading(true);
+
+      const villageLat = data.latitude;
+      const villageLon = data.longitude;
+      const campA = data.relocation_sites[0];
+      const campB = data.relocation_sites[1];
+
+      const [osrmRoute1, osrmRoute2] = await Promise.all([
+        fetchOSRMRoute(villageLat, villageLon, campA.latitude, campA.longitude),
+        fetchOSRMRoute(villageLat, villageLon, campB.latitude, campB.longitude)
+      ]);
+
+      setOsrmRoutes({ route1: osrmRoute1, route2: osrmRoute2 });
+      setRoutesLoading(false);
+    } catch (err) {
+      console.error('Simulation fetch failed', err);
+      setRoutesLoading(false);
+    }
+  };
+
+  const handleResetLive = () => {
+    setSimulationData(null);
+    setOsrmRoutes(null);
+    setRoutesLoading(false);
+  };
 
   // Fetch all initial data
   const fetchData = useCallback(async () => {
@@ -227,6 +311,7 @@ export const App = () => {
         liveFeedActive={liveFeedActive}
         onRefresh={handleRefresh}
         isRefreshing={isRefreshing}
+        simulationData={simulationData}
       />
 
       {/* Main Content Area */}
@@ -244,6 +329,8 @@ export const App = () => {
                   onVillageSelect={handleVillageSelect}
                   apiHealth={apiHealth}
                   isLoading={isLoading}
+                  onSimulate={handleSimulate}
+                  simulationData={simulationData}
                 />
               </div>
             </div>
@@ -262,10 +349,27 @@ export const App = () => {
 
             {/* Central Interactive Map */}
             <main className="flex-1 h-full relative overflow-hidden">
+              {simulationData && (
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] flex flex-col items-center gap-2">
+                  <div className="flex items-center gap-4 bg-orange-100 border border-orange-400 text-orange-900 px-6 py-3 rounded-lg shadow-xl font-bold">
+                    <span>🔴 SIMULATION MODE — Pre-computed flood event active</span>
+                    <button onClick={handleResetLive} className="px-3 py-1 bg-white border border-orange-300 rounded text-sm text-orange-800 hover:bg-orange-50">
+                      Reset to Live Data
+                    </button>
+                  </div>
+                  {routesLoading && (
+                    <div className="bg-blue-100 border border-blue-400 text-blue-900 px-4 py-2 rounded-lg shadow-md font-semibold text-sm animate-pulse">
+                      🛣️ Fetching real road routes via OSRM...
+                    </div>
+                  )}
+                </div>
+              )}
               <MapView
                 villages={villages}
                 selectedVillageId={selectedVillageId}
                 onVillageSelect={handleVillageSelect}
+                simulationData={simulationData}
+                osrmRoutes={osrmRoutes}
               />
             </main>
 
@@ -274,6 +378,8 @@ export const App = () => {
               <DetailDrawer
                 village={selectedVillage}
                 onClose={handleCloseDrawer}
+                simulationData={simulationData}
+                osrmRoutes={osrmRoutes}
               />
             )}
           </>

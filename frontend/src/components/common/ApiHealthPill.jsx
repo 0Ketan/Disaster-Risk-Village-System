@@ -5,7 +5,7 @@ import { CheckCircle2, AlertTriangle, XCircle, Activity } from 'lucide-react';
  * ApiHealthPill Component
  * Displays real-time health indicator for external APIs:
  * - OpenTopoData (Elevation & Slope)
- * - OpenWeatherMap (Precipitation & Real-time Weather)
+ * - Open-Meteo (Precipitation & Real-time Weather)
  * - Meteostat (Historical Climate Records)
  */
 export const ApiHealthPill = ({ service }) => {

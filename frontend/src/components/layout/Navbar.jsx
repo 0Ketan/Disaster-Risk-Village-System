@@ -19,7 +19,8 @@ export const Navbar = ({
   lastUpdated = null,
   liveFeedActive = false,
   onRefresh,
-  isRefreshing = false
+  isRefreshing = false,
+  simulationData = null
 }) => {
   const formatPop = (num) => {
     if (!num) return '0';
@@ -29,6 +30,8 @@ export const Navbar = ({
   };
 
   const activeTimestamp = lastUpdated || lastSyncTime;
+  
+  const displayActionRequired = simulationData ? 1 : (criticalCount + highCount);
 
   return (
     <header className="fixed top-0 left-0 right-0 h-nav bg-primary text-white z-50 flex items-center justify-between px-4 sm:px-6 shadow-md border-b border-primary-container">
@@ -110,7 +113,7 @@ export const Navbar = ({
         {/* Critical & High risk count */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs">
           <span className="text-rose-300">Action Required:</span>
-          <span className="font-bold text-rose-400">{criticalCount + highCount}</span>
+          <span className="font-bold text-rose-400">{displayActionRequired}</span>
         </div>
 
         {/* Population at Risk */}

@@ -12,14 +12,7 @@ export const FALLBACK_HEALTH_DATA = {
       latency_ms: 110,
       message: 'Elevation grid operational'
     },
-    {
-      service: 'OpenWeatherMap',
-      name: 'OpenWeatherMap (Rainfall & Storms)',
-      status: 'healthy',
-      mode: 'live',
-      latency_ms: 185,
-      message: 'Precipitation feeds connected'
-    },
+
     {
       service: 'Meteostat',
       name: 'Meteostat (Climate History)',
@@ -68,8 +61,8 @@ export async function getApiHealthStatus() {
           const latency = typeof val === 'object' && val.latency_ms ? val.latency_ms : (mode === 'live' ? 140 : 0);
           const nameMap = {
             opentopodata: 'OpenTopoData (Elevation)',
-            openweathermap: 'OpenWeatherMap (Precipitation)',
-            meteostat: 'Meteostat (Climate History)'
+            meteostat: 'Meteostat (Climate History)',
+            openmeteo: 'Open-Meteo (Flood & Weather)'
           };
           return {
             service: key,

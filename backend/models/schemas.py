@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union, Union
 
 
 class ScoreBreakdown(BaseModel):
@@ -14,7 +14,7 @@ class ScoreBreakdown(BaseModel):
 
 
 class Village(BaseModel):
-    id: int
+    id: Union[int, str]
     name: str
     district: str
     state: str = "Uttarakhand"
@@ -65,7 +65,7 @@ class RelocationSiteBreakdown(BaseModel):
 
 
 class RelocationSite(BaseModel):
-    id: int
+    id: Union[int, str]
     name: str
     district: str
     latitude: float
@@ -140,7 +140,7 @@ class VillageDetailResponse(BaseModel):
 
 
 class RelocationResponse(BaseModel):
-    village_id: int
+    village_id: Union[int, str]
     village_name: str
     risk_score: float
     relocation_required: bool
@@ -151,7 +151,7 @@ class RelocationResponse(BaseModel):
 
 
 class DashboardPriorityItem(BaseModel):
-    id: int
+    id: Union[int, str]
     name: str
     district: str
     population: int

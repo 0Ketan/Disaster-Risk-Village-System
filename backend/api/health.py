@@ -6,7 +6,6 @@ from datetime import datetime
 from fastapi import APIRouter
 from ..models.schemas import SystemHealthResponse
 from ..clients.opentopodata import probe_opentopodata
-from ..clients.openweathermap import probe_openweathermap
 from ..clients.meteostat_client import probe_meteostat
 
 router = APIRouter(prefix="/api", tags=["Health"])
@@ -45,11 +44,10 @@ def get_system_health():
     Performs live connectivity checks against external APIs.
     """
     topo_health = probe_opentopodata()
-    weather_health = probe_openweathermap()
     meteo_health = probe_meteostat()
     openmeteo_health = probe_open_meteo()
 
-    services = [topo_health, weather_health, meteo_health, openmeteo_health]
+    services = [topo_health, meteo_health, openmeteo_health]
 
     # System is operational if resilient fallbacks are functioning properly
     overall_status = "ok"

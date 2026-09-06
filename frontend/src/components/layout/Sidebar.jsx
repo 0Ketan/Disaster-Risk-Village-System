@@ -29,7 +29,9 @@ export const Sidebar = ({
   selectedVillageId, 
   onVillageSelect, 
   apiHealth = [], 
-  isLoading = false 
+  isLoading = false,
+  onSimulate,
+  simulationData
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRiskFilter, setSelectedRiskFilter] = useState('All');
@@ -145,16 +147,28 @@ export const Sidebar = ({
         ) : (
           filteredVillages.map((v) => {
             const isSelected = Number(selectedVillageId) === Number(v.id);
-            const score = Math.round(v.risk_score || 0);
-            const level = v.risk_level || getRiskLevel(score);
-            const color = getRiskColor(score);
+            let score = Math.round(v.risk_score || 0);
+            let level = v.risk_level || getRiskLevel(score);
+            let badgeClass = getRiskBadgeClasses(score);
+            let customBadgeStyle = {};
+            let customScoreStyle = {};
+            let customLevelStyle = {};
             const isFallback = v._source === 'fallback';
+
+            if (v.name === 'Rajnagar' && simulationData) {
+              score = 85;
+              level = 'CRITICAL';
+              badgeClass = 'bg-rose-100 border-rose-200';
+              customBadgeStyle = { backgroundColor: '#DC2626', borderColor: '#DC2626' };
+              customScoreStyle = { color: 'white' };
+              customLevelStyle = { color: '#DC2626', fontWeight: 'bold' };
+            }
 
             return (
               <div
                 key={v.id}
                 onClick={() => onVillageSelect(v.id)}
-                className={`p-3.5 cursor-pointer transition-all hover:bg-surface flex items-center justify-between gap-3 ${
+                className={`group p-3.5 cursor-pointer transition-all hover:bg-surface flex items-center justify-between gap-3 ${
                   isSelected
                     ? 'bg-emerald-50/70 border-l-4 border-emerald-600 shadow-inner'
                     : 'hover:border-l-4 hover:border-outline-variant'
@@ -179,17 +193,29 @@ export const Sidebar = ({
                       {v.population ? v.population.toLocaleString() : 'N/A'}
                     </span>
                   </div>
+                  {v.name === 'Rajnagar' && !simulationData && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSimulate && onSimulate();
+                      }}
+                      className={`mt-2 border border-red-500 text-red-600 px-2 py-1 text-xs rounded hover:bg-red-50 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                    >
+                      ⚡ Simulate Flood Crisis
+                    </button>
+                  )}
                 </div>
 
                 {/* Risk Score Pill */}
                 <div className="flex flex-col items-end flex-shrink-0 gap-1">
                   <div 
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold border flex items-center gap-1 ${getRiskBadgeClasses(score)}`}
+                    className={`px-2.5 py-1 rounded-md text-xs font-bold border flex items-center gap-1 ${badgeClass}`}
+                    style={customBadgeStyle}
                   >
-                    <span>{score}</span>
-                    <span className="text-[10px] font-normal opacity-75">/100</span>
+                    <span style={customScoreStyle}>{score}</span>
+                    <span className="text-[10px] font-normal opacity-75" style={customScoreStyle}>/100</span>
                   </div>
-                  <span className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant" style={customLevelStyle}>
                     {level}
                   </span>
                 </div>
